@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CPECOG2 Quiz 2: Word Bank (1–100)</title>
+<style>
+:root{--bg:#f6f7f4;--card:#fff;--tx:#1d2420;--mut:#5f6b64;--bd:#d9ded8;--ac:#1f6f4a;--acx:#fff;--ok:#1f7a3f;--okb:#e3f4e8;--no:#b3261e;--nob:#fbe9e7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#121513;--card:#1a1f1c;--tx:#e8ede9;--mut:#9aa69e;--bd:#2c342f;--ac:#5fc08c;--acx:#0d1a12;--ok:#6fd195;--okb:#16301f;--no:#ff8a80;--nob:#3a1b18}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#121513;--card:#1a1f1c;--tx:#e8ede9;--mut:#9aa69e;--bd:#2c342f;--ac:#5fc08c;--acx:#0d1a12;--ok:#6fd195;--okb:#16301f;--no:#ff8a80;--nob:#3a1b18}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--card);border-bottom:1px solid var(--bd);padding:10px 16px}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-size:1.15rem;margin:0}
+.sub{color:var(--mut);font-size:.85rem;margin:2px 0 8px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#prog,#score{font-size:.9rem;color:var(--mut)}
+#score{color:var(--tx);font-weight:700}
+.track{height:5px;background:var(--bd);border-radius:3px;margin-top:8px;overflow:hidden}
+#bar{height:100%;width:0;background:var(--ac);transition:width .2s}
+button{font:inherit;font-size:.9rem;padding:7px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer}
+button.p{background:var(--ac);color:var(--acx);border-color:var(--ac);font-weight:600}
+button.link{border:0;background:none;color:var(--ac);padding:0 0 0 8px;text-decoration:underline;font-size:.85rem}
+main{padding:14px 16px 60px}
+.item{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.item.good{background:var(--okb);border-color:var(--ok)}
+.item.bad{background:var(--nob);border-color:var(--no)}
+.top{display:flex;gap:8px;align-items:center}
+.num{font-size:1rem}
+.tag{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);border:1px solid var(--bd);border-radius:20px;padding:0 8px}
+.q{margin:6px 0 8px}
+input{width:100%;font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+input:focus{outline:2px solid var(--ac);outline-offset:0}
+.res{font-size:.9rem;margin-top:6px;min-height:0}
+.good .res{color:var(--ok)}
+.bad .res{color:var(--no)}
+.item[hidden]{display:none}
+.item .answer{font-size:.82rem;color:var(--mut);margin-top:5px}
+.item .res button{font-size:.8rem;padding:4px 8px;margin-left:6px}
+@media(max-width:650px){.tools{grid-template-columns:1fr 1fr}.tools label{align-self:end}.tools input{grid-column:1 / -1}.tools #visible{grid-column:1 / -1;text-align:left}}
+.note{color:var(--mut);font-size:.8rem;margin:0 0 12px}
+.tools{display:grid;grid-template-columns:auto minmax(180px,1fr) auto minmax(150px,220px) auto;gap:8px;align-items:center;margin:0 0 14px;padding:12px;background:var(--card);border:1px solid var(--bd);border-radius:12px}.tools label{font-size:.85rem;font-weight:600}.tools input{width:100%;font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}.tools input:focus,.tools select:focus{outline:2px solid var(--ac);outline-offset:0}#visible{color:var(--mut);font-size:.8rem;text-align:right}
+.bank{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 14px;margin-bottom:14px}.bank summary{cursor:pointer;font-weight:600}.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chip{font-size:.85rem;border:1px solid var(--bd);border-radius:20px;padding:1px 10px;background:var(--bg)}.chip.used{opacity:.4}select{width:100%;font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}select:focus{outline:2px solid var(--ac)}
+</style>
+<style id="light-mode">
+:root {
+  color-scheme: light !important;
+  --bg: #f6f7f4 !important;
+  --card: #ffffff !important;
+  --tx: #1d2420 !important;
+  --mut: #5f6b64 !important;
+  --bd: #d9ded8 !important;
+  --ac: #1f6f4a !important;
+  --acx: #ffffff !important;
+  --ok: #1f7a3f !important;
+  --okb: #e3f4e8 !important;
+  --no: #b3261e !important;
+  --nob: #fbe9e7 !important;
+}
+html, body { color-scheme: light !important; }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>CPECOG2 Quiz 2: Word Bank (1–100)</h1>
+<div class="sub">RNNs · LSTM/GRU/SRU · Training challenges · Transfer learning in CNNs</div>
+<div class="row"><button class="p" id="sub">Finish quiz</button><button id="rst">Reset</button><button id="shf">Shuffle</button><button id="review">Review missed</button><span id="prog"></span><span id="score"></span></div>
+<div class="track"><div id="bar"></div></div>
+</div></header>
+<main><div class="wrap">
+<p class="note">Choose the best term for each clue. Your answer is checked immediately and locks after selection. Use the filters to focus on one topic or review missed items.</p>
+<div class="tools"><label for="search">Find a clue</label><input id="search" type="search" placeholder="Search questions or answers"><label for="topic">Topic</label><select id="topic"><option value="all">All topics</option></select><span id="visible"></span></div>
+<details class="bank" open><summary>Word bank</summary><div class="chips" id="chips"></div></details>
+<div id="list"></div>
+</div></main>
+<script>
+const S=[["RNN",[["A neural network that carries a state from step to step to process sequences.","Recurrent neural network"],["Another name for the vanilla RNN, after the researcher who introduced it in 1990.","Elman"],["In hₜ = tanh(Wxh xₜ + Whh hₜ₋₁ + bh), hₜ is the ___ state (the network’s memory).","hidden"],["Name of the matrix Whh, which multiplies the previous hidden state.","recurrent weight"],["Bounded, zero-centered activation (range −1 to 1) used in the standard vanilla RNN cell.","tanh"],["Applying the same weights at every time step is called ___.","parameter sharing"],["Task pattern of image captioning: one input, many outputs.","one-to-many"],["Task pattern of sentiment classification: many inputs, one label.","many-to-one"],["Task pattern for translation and summarization, where input and output lengths differ.","encoder-decoder"],["Total parameters of a vanilla RNN with D = 50, H = 128, C = 10.","24,202"],["Number of parameters in Whh when H = 128.","16,384"],["Weights needed by a dense layer that flattens T = 100 steps of D = 50 features into H = 128 units.","640,000"],["BPTT memory per sequence grows ___ with sequence length T.","linearly"],["Scalar RNN (w = 0.5, u = 0.8, b = 0, h₀ = 0, tanh): h₁ for x₁ = 1.0.","0.462"],["Same RNN: h₂ for x₂ = 0.5.","0.551"],["Same RNN: h₃ for x₃ = −1.0.","−0.059"],["Loss ½(h₃ − y)² for h₃ = −0.059 and target y = 0.5 (3 decimals).","0.156"],["Default initial hidden state h₀.","zero"],["Loss function normally paired with a softmax output for sequence classification.","cross-entropy"],["Language-model quality is reported as ___, the exponential of mean cross-entropy.","perplexity"],["Padded steps are kept out of the loss by applying a ___.","masking"],["RNN that reads the sequence both left-to-right and right-to-left.","bidirectional"],["Bidirectional layers are unsuitable for streaming and for ___ tasks.","forecasting"],["BPTT is ordinary backpropagation applied to the ___ graph.","unrolled"],["Because weights are tied, a weight’s gradient is the ___ of its contributions from all T copies.","sum"],["In BPTT, δ(T+1) is initialized to ___.","zero"],["Worked BPTT example: δ₃ = (h₃ − y)(1 − h₃²).","−0.557"],["Worked BPTT example: total ∂L/∂u.","−0.450"],["Worked BPTT example: total ∂L/∂w.","0.207"],["Step t cannot start until step ___ finishes, which limits GPU parallelism.","t − 1"]]],["Cells",[["Gated cell that adds a protected cell state cₜ alongside hₜ (abbreviation).","LSTM"],["Authors of the original LSTM (1997).","Hochreiter and Schmidhuber"],["LSTM gate that scales the old cell state: near 1 keeps it, near 0 erases it.","forget gate"],["LSTM gate that controls how much of the cell is exposed as hₜ.","output gate"],["LSTM gate that decides how much candidate content gₜ is written into the cell.","input gate"],["Year the forget gate was added to the LSTM (Gers et al.).","2000"],["In cₜ = fₜ ⊙ cₜ₋₁ + iₜ ⊙ gₜ, the update is ___ rather than repeatedly squashed.","additive"],["The direct gradient path ∂cₜ/∂cₜ₋₁ in an LSTM equals ___.","forget gate"],["Recommended initial value of the LSTM forget-gate bias.","1"],["Number of weight blocks in an LSTM.","4"],["LSTM parameters at D = H = 128, with biases.","131,584"],["LSTM recurrent-layer parameters at D = 50, H = 128.","91,648"],["Gated cell with one state hₜ and two gates, introduced in 2014 (abbreviation).","GRU"],["GRU gate that interpolates between keeping the old state and writing the candidate.","update gate"],["GRU gate that controls how much of the previous state is used to form the candidate.","reset gate"],["Number of weight blocks in a GRU.","3"],["GRU parameters at D = H = 128.","98,688"],["GRU parameters at D = 50, H = 128.","68,736"],["Vanilla RNN weights at D = H = 128, with biases.","32,896"],["Which LSTM gate does the GRU lack?","output gate"],["Cell whose target is speed rather than memory (abbreviation).","SRU"],["SRU removes the matrix multiply on the previous ___ in its gates.","hidden state"],["In SRU, the gates use an elementwise term v ⊙ ___.","cₜ₋₁"],["SRU’s highway term (1 − rₜ) ⊙ xₜ assumes D equals ___ (or a projection of xₜ).","H"],["SRU parameters at D = H = 128 (3HD + 4H).","49,664"],["Greff et al. (2017) found no gating variant clearly better than the standard ___.","LSTM"],["Cell suggested for streaming or edge devices, besides a small LSTM.","GRU"],["Cell suggested for long sequences when GPU training time matters.","SRU"]]],["Training",[["The gradient across k steps is a product of k ___.","Jacobians"],["Problem in which corrections shrink toward zero as they travel back (telephone-game analogy).","vanishing gradient"],["Problem in which corrections grow without bound (chismis analogy).","exploding gradient"],["If each step keeps 90% of the signal, about what percent remains after 30 steps?","4%"],["If each step adds 10%, about how many times larger is the signal after 30 steps?","17×"],["The loss suddenly spikes or turns into NaN. Which remedy fixes it?","gradient clipping"],["Clipping shrinks a too-large gradient to the limit but keeps its ___.","direction"],["Remedy of backpropagating only k steps within each chunk.","truncated BPTT"],["Trade-off of truncation: dependencies longer than the ___ may be missed.","chunk"],["PyTorch call at the start of each chunk to stop the gradient across the border: h.___().","detach"],["Keras option for carrying state across batches of consecutive windows: stateful=___.","True"],["Remedy for fading gradients that uses LSTM or GRU cells.","gated cells"],["Paths that let the signal jump past several steps.","skip connections"],["Regularization that randomly switches off parts of the network during training.","dropout"],["Stopping when the validation score stops improving and keeping the best version.","early stopping"],["Memorizing the training set instead of learning, like memorizing last year’s exam.","overfitting"],["Randomly shuffling time-ordered data lets the model see the future: this is called ___.","leakage"],["Honest split for time series: train on the past, test on the future (___ split).","chronological"],["Persistence baseline: “bukas parang ___.”","ngayon"],["Exposure bias from teacher forcing can be mitigated by ___ sampling.","scheduled"]]],["Transfer",[["Reusing a model trained on a large source task to learn a new target task with less data.","transfer learning"],["Dataset that is the source of most public pretrained CNN weights.","ImageNet"],["Number of labeled training images in ImageNet-1k.","1.28 million"],["Early CNN layers mainly detect low-level features such as colors and ___.","edges"],["Layer that is usually replaced when adapting a pretrained CNN, because the label space changes.","classification head"],["Yosinski et al. (2014): freezing middle layers can hurt because neighboring layers ___ during source training.","co-adapted"],["Strategy that freezes the backbone and trains only a new head.","feature extraction"],["Strategy that continues training pretrained layers at a small learning rate.","fine-tuning"],["Strategy with random initialization that needs 100k+ images and overfits small data.","training from scratch"],["Why warm up the head first: a random head produces large ___ that can damage pretrained weights.","gradients"],["Input size expected by most ImageNet CNNs (Inception uses 299×299).","224×224"],["Grayscale images are usually replicated to this many channels.","3"],["Parameters in ResNet-50’s original fc layer (2048 × 1000 + 1000).","2,049,000"],["Parameters in a new ResNet-50 head for C = 5 classes (2048 × 5 + 5).","10,245"],["In PyTorch, set p.requires_grad = ___ to freeze a parameter.","False"],["In Keras, set layer.___ = False to freeze a layer.","trainable"],["BatchNorm should be kept in ___ mode when fine-tuning on small batches.","inference"],["Releasing one block per stage, with a lower learning rate for each newly released block.","gradual unfreezing"],["Pretrained weights that give no gain, or worse results than scratch, cause ___ transfer.","negative"],["Baseline of training a linear classifier on frozen features.","linear probe"],["For medical images, split by ___ rather than by image to prevent leakage.","patient"],["Models like SimCLR, MoCo and DINO are pretrained without labels using ___ learning.","self-supervised"]]]];
+const D=["sigmoid","ReLU","softmax","underfitting","weight decay","max pooling","Xavier initialization","Transformer","stride","batch size"];
+const bank=[...new Set([...S.flatMap(s=>s[1].map(i=>i[1])),...D])].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
+let Q=[],reviewOnly=false;
+const $=id=>document.getElementById(id);
+$("chips").innerHTML="";
+const chipEls=bank.map(b=>{const c=document.createElement("span");c.className="chip";c.textContent=b;$("chips").appendChild(c);return c;});
+S.forEach(([topic])=>{const o=document.createElement("option");o.value=topic;o.textContent=topic;$("topic").appendChild(o);});
+function build(shuffle){
+  Q=[];S.forEach(([t,items])=>items.forEach(([q,a])=>Q.push({t,q,a})));
+  if(shuffle)for(let i=Q.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[Q[i],Q[j]]=[Q[j],Q[i]];}
+  const L=$("list");L.innerHTML="";$("score").textContent="";reviewOnly=false;$("review").classList.remove("p");
+  Q.forEach((x,i)=>{
+    x.n=i+1;
+    const d=document.createElement("div");d.className="item";
+    d.innerHTML='<div class="top"><b class="num"></b><span class="tag"></span></div><p class="q"></p><select aria-label="Answer for question"></select><div class="res"></div>';
+    d.querySelector(".num").textContent=x.n+".";
+    d.querySelector(".tag").textContent=x.t;
+    d.querySelector(".q").textContent=x.q;
+    const sel=d.querySelector("select");
+    const o0=document.createElement("option");o0.value="";o0.textContent="Choose from the word bank";sel.appendChild(o0);
+    bank.forEach(b=>{const o=document.createElement("option");o.value=b;o.textContent=b;sel.appendChild(o);});
+    sel.onchange=()=>{if(x.sel.value)grade(x);applyFilters();};
+    x.el=d;x.sel=sel;x.res=d.querySelector(".res");
+    L.appendChild(d);
+  });
+  applyFilters();scrollTo({top:0});
+}
+function count(){
+  const n=Q.filter(x=>x.sel.value).length;
+  $("prog").textContent=n+" / "+Q.length+" answered";
+  $("bar").style.width=(n/Q.length*100)+"%";
+  const used=new Set(Q.map(x=>x.sel.value));
+  chipEls.forEach((c,i)=>c.classList.toggle("used",used.has(bank[i])));
+}
+function grade(x){
+  if(x.sel.disabled)return;
+  const ok=x.sel.value===x.a;x.ok=ok;
+  x.el.className="item "+(ok?"good":"bad");
+  x.res.innerHTML=ok?"✓ Correct":"✗ Not quite";
+  if(!ok){const answer=document.createElement("span");answer.className="answer";answer.textContent=" Correct answer: "+x.a;x.res.appendChild(answer);}
+  x.sel.disabled=true;
+  tally();
+}
+function tally(){
+  const c=Q.filter(x=>x.ok).length,n=Q.filter(x=>x.sel.disabled).length;
+  $("score").textContent="Score: "+c+" / "+n+" graded";
+}
+function applyFilters(){
+  const search=$("search").value.trim().toLocaleLowerCase(),topic=$("topic").value;
+  let visible=0;
+  Q.forEach(x=>{
+    const matchesTopic=topic==="all"||x.t===topic;
+    const matchesSearch=!search||(x.q+" "+x.a).toLocaleLowerCase().includes(search);
+    const matchesReview=!reviewOnly||x.ok===false;
+    const show=matchesTopic&&matchesSearch&&matchesReview;
+    x.el.hidden=!show;if(show)visible++;
+  });
+  $("visible").textContent=visible+" of "+Q.length+" shown";
+  count();
+}
+$("sub").onclick=()=>{
+  if(Q.some(x=>!x.sel.value)&&!confirm("Some items are blank and will be marked wrong. Finish anyway?"))return;
+  Q.forEach(grade);
+  const c=Q.filter(x=>x.ok).length;
+  $("score").textContent="Final: "+c+" / "+Q.length+" ("+Math.round(c/Q.length*100)+"%)";
+  scrollTo({top:0,behavior:"smooth"});
+};
+$("rst").onclick=()=>build(false);
+$("shf").onclick=()=>build(true);
+$("review").onclick=()=>{reviewOnly=!reviewOnly;$("review").classList.toggle("p",reviewOnly);applyFilters();};
+$("search").oninput=applyFilters;
+$("topic").onchange=applyFilters;
+build(false);
+</script>
+</body>
+</html>

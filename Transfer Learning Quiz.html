@@ -1,0 +1,460 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style id="light-mode">
+:root {
+  color-scheme: light !important;
+  --bg: #F2F6F3 !important; --surface: #FFFFFF !important; --ink: #14231B !important;
+  --muted: #566A5F !important; --line: #D3DDD6 !important; --primary: #0F5132 !important;
+  --on-primary: #FFFFFF !important; --primary-soft: #E3EFE7 !important; --gold: #B8891A !important;
+  --good: #14693B !important; --good-bg: #E2F3E8 !important; --bad: #B3372D !important;
+  --bad-bg: #FBE8E6 !important;
+}
+html, body { color-scheme: light !important; }
+</style></head><body>
+<title>Transfer Learning Quiz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: one narrow reading column; masthead, a sticky score and tab bar, then one quiz part at a time. */
+:root {
+  --bg: #F2F6F3;
+  --surface: #FFFFFF;
+  --ink: #14231B;
+  --muted: #566A5F;
+  --line: #D3DDD6;
+  --primary: #0F5132;
+  --on-primary: #FFFFFF;
+  --primary-soft: #E3EFE7;
+  --gold: #B8891A;
+  --good: #14693B;
+  --good-bg: #E2F3E8;
+  --bad: #B3372D;
+  --bad-bg: #FBE8E6;
+  --display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1713; --surface: #16221C; --ink: #E6EFE9; --muted: #93A69B; --line: #2A3B32;
+    --primary: #6FCB9A; --on-primary: #0B1A12; --primary-soft: #1A2D23; --gold: #E0B341;
+    --good: #6FCB9A; --good-bg: #153326; --bad: #F29B92; --bad-bg: #3A1D1A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1713; --surface: #16221C; --ink: #E6EFE9; --muted: #93A69B; --line: #2A3B32;
+  --primary: #6FCB9A; --on-primary: #0B1A12; --primary-soft: #1A2D23; --gold: #E0B341;
+  --good: #6FCB9A; --good-bg: #153326; --bad: #F29B92; --bad-bg: #3A1D1A;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 16px/1.55 var(--body);
+  padding-block: 0 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 30; background: var(--bg);
+}
+.wrap { max-width: 760px; margin: 0 auto; }
+.masthead { padding-block: 28px 18px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+h1 { font: 700 clamp(28px, 6vw, 40px)/1.1 var(--display); margin: 0 0 8px; text-wrap: balance; color: var(--primary); }
+.sub { margin: 0; color: var(--muted); max-width: 60ch; }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); padding-top: 8px; }
+.score-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-bottom: 8px; }
+.score { font: 500 22px/1 var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.score small { font-size: 13px; color: var(--muted); }
+.track { flex: 1 1 160px; min-width: 120px; height: 8px; border-radius: 4px; background: var(--line); position: relative; overflow: hidden; }
+.track i { position: absolute; inset: 0 auto 0 0; display: block; }
+.track .att { background: var(--gold); opacity: .45; }
+.track .earn { background: var(--primary); }
+.attempted { font: 12px/1 var(--mono); color: var(--muted); white-space: nowrap; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.tab { border: 0; background: none; color: var(--muted); font: 500 14px/1.2 var(--body); padding: 10px 12px; border-bottom: 3px solid transparent; white-space: nowrap; cursor: pointer; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--gold); }
+.tab .st { font: 12px var(--mono); color: var(--muted); margin-left: 6px; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+main { padding-top: 22px; }
+.part-head h2 { font: 700 24px/1.2 var(--display); margin: 0 0 4px; text-wrap: balance; }
+.part-head p { margin: 0 0 18px; color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.q { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
+.qtop { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+.num { flex: none; font: 500 13px/1 var(--mono); color: var(--on-primary); background: var(--primary); border-radius: 6px; padding: 6px 7px; }
+.qtext { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.tag { display: inline-block; font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 3px 5px; margin-left: 8px; vertical-align: 2px; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opts.two { flex-direction: row; }
+.opts.two .opt { flex: 1; justify-content: center; }
+.opt { display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; min-width: 0; }
+.opt:hover:not(:disabled) { border-color: var(--primary); background: var(--primary-soft); }
+.opt:disabled { cursor: default; }
+.opt .k { flex: none; font: 500 13px/1.5 var(--mono); color: var(--muted); }
+.opt span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.opt.correct { border-color: var(--good); background: var(--good-bg); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.opt.picked { border-color: var(--primary); }
+.why { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--primary-soft); font-size: 14px; overflow-wrap: anywhere; }
+.why b.ok { color: var(--good); }
+.why b.no { color: var(--bad); }
+.calc { font-family: var(--mono); font-size: 13px; display: block; margin-top: 6px; color: var(--muted); }
+
+.mgrid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.mrows { display: flex; flex-direction: column; gap: 8px; }
+.mrow { display: grid; grid-template-columns: auto minmax(0, 1fr) 84px; gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.mrow.correct { border-color: var(--good); background: var(--good-bg); }
+.mrow.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.mrow .t { min-width: 0; overflow-wrap: anywhere; }
+.mrow .fix { grid-column: 2 / 4; font: 12px var(--mono); color: var(--bad); }
+select { font: 500 14px var(--mono); padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); width: 100%; }
+.legend { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.legend li { display: flex; gap: 10px; min-width: 0; }
+.legend b { flex: none; font: 500 13px/1.5 var(--mono); color: var(--primary); width: 1.2em; }
+.legend span { min-width: 0; overflow-wrap: anywhere; }
+.legend-title { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+
+.given { font-size: 15px; margin: 0 0 12px; overflow-wrap: anywhere; }
+.fields { display: flex; flex-direction: column; gap: 10px; }
+.field { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 190px); gap: 6px 12px; align-items: center; }
+.field label { font-size: 14px; min-width: 0; overflow-wrap: anywhere; }
+.field input { font: 500 15px var(--mono); font-variant-numeric: tabular-nums; width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.field input:disabled { opacity: 1; }
+.field.ok input { border-color: var(--good); background: var(--good-bg); }
+.field.no input { border-color: var(--bad); background: var(--bad-bg); }
+.field .exp { grid-column: 1 / -1; font: 12px var(--mono); color: var(--bad); }
+.sol { margin-top: 14px; padding: 12px; border-radius: 8px; background: var(--primary-soft); font: 13px/1.7 var(--mono); overflow-x: auto; white-space: pre; }
+.sol-title { font: 600 13px var(--body); display: block; margin-bottom: 4px; white-space: normal; }
+.pts { font: 500 12px var(--mono); color: var(--muted); margin-left: auto; white-space: nowrap; }
+.btn { font: 600 15px var(--body); padding: 11px 18px; border-radius: 8px; border: 1px solid var(--primary); background: var(--primary); color: var(--on-primary); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--primary); }
+.btn:disabled { opacity: .5; cursor: default; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+
+.result { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+.big { font: 700 clamp(40px, 10vw, 60px)/1 var(--display); color: var(--primary); }
+.big small { font: 500 18px var(--mono); color: var(--muted); }
+.rows { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
+.rrow .rl { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; margin-bottom: 5px; }
+.rrow .rl span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.rrow .miss { font: 12px var(--mono); color: var(--muted); margin-top: 4px; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .mgrid { grid-template-columns: minmax(0, 1fr); }
+  .field { grid-template-columns: minmax(0, 1fr); }
+  .opts.two { flex-direction: row; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .track i { transition: width .35s ease; }
+  .opt, .btn { transition: background .15s, border-color .15s; }
+}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">CPECOG2 · CpE Elective 2 · Deep Neural Networks</p>
+    <h1>Transfer Learning in CNNs</h1>
+    <p class="sub">50 points across four parts. Answers are checked as you go, and each one shows the reasoning or the worked computation.</p>
+  </header>
+  <div class="bar">
+    <div class="score-row">
+      <div class="score" id="score" aria-live="polite">0 <small>/ 50 pts</small></div>
+      <div class="track" title="Gold: points attempted. Green: points earned."><i class="att" id="att"></i><i class="earn" id="earn"></i></div>
+      <div class="attempted" id="attempted">0 attempted</div>
+    </div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+  </div>
+  <main id="view"></main>
+</div>
+
+<script>
+var TF = [
+  ["Early CNN layers (edges, color blobs) are generally more transferable than the final class-specific layers.", true,
+   "Early layers learn generic features useful for almost any image task. Final layers are tied to the source classes."],
+  ["In feature extraction, the pretrained backbone is trained at a small learning rate.", false,
+   "In feature extraction the backbone is frozen and only the new head is trained. A small backbone learning rate belongs to fine-tuning."],
+  ["The new head is trained first (warm-up) because its random initialization produces large gradients that can damage pretrained weights.", true,
+   "A randomly initialized head produces large gradients. If everything is trainable at once, they can damage the pretrained weights."],
+  ["When fine-tuning on small batches, BatchNorm layers should be kept in training mode so they adapt to the new data.", false,
+   "Keep BatchNorm in inference mode. With small batches the running statistics become noisy and drift from the pretrained values."],
+  ["He, Girshick, and Dollár (2019) showed that ImageNet pretraining always beats random initialization on COCO detection.", false,
+   "Random initialization matched pretrained results given enough iterations and suitable normalization. Pretraining mainly sped up early convergence."],
+  ["Yosinski et al. (2014) found that transferred layers that were then fine-tuned generalized better than training the target network from scratch.", true,
+   "This was one of their four findings: fine-tuned transferred layers beat random initialization."],
+  ["Grayscale images such as X-rays can be replicated to three channels to fit a pretrained RGB network.", true,
+   "Replicate the channel three times, or sum the first-layer filters over RGB into one channel."],
+  ["In Keras, you must recompile the model after changing <code>trainable</code> flags.", true,
+   "The change only takes effect after model.compile() is called again."],
+  ["For a small target dataset that is very different from the source, the recommended approach is to fine-tune all layers at a high learning rate.", false,
+   "Use cautious, partial transfer: mid-level features, fine-tune only a few layers, augment heavily, and compare against scratch."],
+  ["Splitting a medical dataset by individual image (instead of by patient) is an acceptable way to prevent leakage.", false,
+   "Split by patient, subject, or scene. An image-level split puts images of the same patient in both train and test."]
+];
+
+var MM_T = ["Feature extraction","Fine-tuning","Negative transfer","Co-adaptation","Linear probe","Domain adaptation","Gradual unfreezing","Modality gap","Self-supervised pretraining","Label-space mismatch"];
+var MM_D = [
+  "Neighboring layers learned to work together during source training",
+  "Pretrained weights give no gain, or worse results than scratch",
+  "Backbone frozen; only a new head is trained",
+  "Continuing to train pretrained layers at a small learning rate",
+  "Aligning source and target feature distributions",
+  "Logistic regression or SVM trained on frozen features (baseline)",
+  "Releasing one block per stage, with a lower LR for each newly released block",
+  "X-ray, SAR, or microscopy statistics differ from natural photos",
+  "Pretraining on unlabeled in-domain data",
+  "Source classes do not cover the target concepts"
+];
+var MM_A = ["C","D","B","A","F","E","G","H","I","J"];
+var LET = ["A","B","C","D","E","F","G","H","I","J"];
+
+var MC = [
+  {q:"A ResNet-50 (2048-d feature vector) is adapted to C = 8 classes. How many parameters are in the new fc layer (weights + biases)?", calc:true,
+   o:["16,384","16,392","2,049,000","16,400"], a:1, why:"2048 × 8 + 8 = 16,384 + 8 = 16,392."},
+  {q:"VGG-16 has three FC layers holding 123.6 M of its 138.4 M parameters. What share of the model is the head?", calc:true,
+   o:["8%","45%","89%","98%"], a:2, why:"123.6 / 138.4 = 0.893, so about 89%."},
+  {q:"A red-channel pixel has value 200 (0 to 255). After scaling to [0, 1] and normalizing with mean 0.485 and std 0.229, the value is approximately:", calc:true,
+   o:["0.78","0.30","1.31","3.49"], a:2, why:"200 / 255 = 0.7843. Then (0.7843 − 0.485) / 0.229 = 1.307."},
+  {q:"The head uses LR = 1e-3. Following the 10× to 100× smaller rule, the backbone LR should be in the range:", calc:true,
+   o:["1e-2 to 1e-1","1e-4 to 1e-5","1e-6 to 1e-8","1e-3 (the same as the head)"], a:1, why:"1e-3 ÷ 10 = 1e-4 and 1e-3 ÷ 100 = 1e-5."},
+  {q:"Which strategy is best for a small target dataset that is similar to the source?", calc:false,
+   o:["Train from scratch","Full fine-tuning at high LR","Feature extraction","Fine-tune only conv1"], a:2, why:"Small and similar data calls for feature extraction. Fine-tuning risks overfitting."},
+  {q:"What is the usual symptom of leaving BatchNorm in training mode on a tiny batch of new data?", calc:false,
+   o:["Frozen weights stop updating","Noisy running statistics drift from pretrained values and accuracy can collapse","The head gets too few parameters","The input size changes"], a:1, why:"BN updates its running mean and variance on the small batch. These become noisy and drift away from the pretrained values."},
+  {q:"A 3-class model outputs logits [2, 1, 0] and the true class is the first. The softmax cross-entropy loss is approximately:", calc:true,
+   o:["0.133","0.408","0.693","1.408"], a:1, why:"e² = 7.389, e¹ = 2.718, e⁰ = 1, sum = 11.107. p = 7.389 / 11.107 = 0.665, and −ln(0.665) = 0.408."},
+  {q:"A dataset has 5 classes with 300 images per class. A learning-curve experiment uses 25% of the labels. How many training images is that?", calc:true,
+   o:["75","300","375","750"], a:2, why:"5 × 300 = 1,500 images, and 1,500 × 0.25 = 375."},
+  {q:"Per-class F1 scores are 0.92, 0.85, and 0.60. The macro-F1 is:", calc:true,
+   o:["0.60","0.79","0.85","0.92"], a:1, why:"(0.92 + 0.85 + 0.60) / 3 = 2.37 / 3 = 0.79."},
+  {q:"For feature extraction, you replace the ResNet-50 head with C = 5 outputs. Roughly what fraction of the model's parameters is trainable? (backbone ≈ 23.5 M)", calc:true,
+   o:["≈ 8%","≈ 0.4%","≈ 0.044%","≈ 4.4%"], a:2, why:"Head = 2048 × 5 + 5 = 10,245. Total ≈ 23,518,277, so 10,245 / 23,518,277 ≈ 0.0436%."}
+];
+
+var CP = [
+  {pts:3, title:"Problem 1",
+   given:"A ResNet-50 backbone (23,508,032 parameters) gets a new head for C = 12 classes.",
+   f:[{id:"a",l:"a) Head parameters",v:24588,t:0.5,u:""},
+      {id:"b",l:"b) Total parameters in the model",v:23532620,t:0.5,u:""},
+      {id:"c",l:"c) Percent trainable under feature extraction",v:0.104,t:0.006,u:"%"}],
+   sol:"a) 2048 × 12 + 12 = 24,576 + 12 = 24,588\nb) 23,508,032 + 24,588 = 23,532,620\nc) 24,588 / 23,532,620 = 0.001045 → about 0.104%"},
+  {pts:3, title:"Problem 2",
+   given:"VGG-16's FC layers are 25088×4096, 4096×4096, and 4096×1000, each with a bias vector.",
+   f:[{id:"a",l:"a) Layer 1 parameters (25088×4096 + bias)",v:102764544,t:0.5,u:""},
+      {id:"b",l:"a) Layer 2 parameters (4096×4096 + bias)",v:16781312,t:0.5,u:""},
+      {id:"c",l:"a) Layer 3 parameters (4096×1000 + bias)",v:4097000,t:0.5,u:""},
+      {id:"d",l:"b) Total FC parameters",v:123642856,t:0.5,u:""},
+      {id:"e",l:"b) Share of 138.4 M",v:89.3,t:0.15,u:"%"},
+      {id:"g",l:"c) Parameters removed when the last layer becomes 4096 → 5",v:4076515,t:0.5,u:""}],
+   sol:"a) L1: 102,760,448 + 4,096 = 102,764,544\n   L2: 16,777,216 + 4,096 = 16,781,312\n   L3: 4,096,000 + 1,000 = 4,097,000\nb) Total = 123,642,856 ≈ 123.6 M; 123.64 / 138.4 ≈ 89.3%\nc) New layer = 4096 × 5 + 5 = 20,485\n   Removed = 4,097,000 − 20,485 = 4,076,515"},
+  {pts:2, title:"Problem 3",
+   given:"A 2-class test set gives: Class A: TP = 45, FP = 5, FN = 15. Class B: TP = 30, FP = 10, FN = 10. Give values to 3 decimals.",
+   f:[{id:"a",l:"Class A precision",v:0.9,t:0.006,u:""},
+      {id:"b",l:"Class A recall",v:0.75,t:0.006,u:""},
+      {id:"c",l:"Class A F1",v:0.818,t:0.006,u:""},
+      {id:"d",l:"Class B precision",v:0.75,t:0.006,u:""},
+      {id:"e",l:"Class B recall",v:0.75,t:0.006,u:""},
+      {id:"g",l:"Class B F1",v:0.75,t:0.006,u:""},
+      {id:"h",l:"Macro-F1",v:0.784,t:0.006,u:""}],
+   sol:"Class A: P = 45/50 = 0.900, R = 45/60 = 0.750\n         F1 = 2(0.90)(0.75) / 1.65 = 0.818\nClass B: P = 30/40 = 0.750, R = 30/40 = 0.750\n         F1 = 0.750\nMacro-F1 = (0.818 + 0.750) / 2 = 0.784"},
+  {pts:2, title:"Problem 4",
+   given:"Four seeds give accuracies of 84%, 86%, 90%, and 88%. Report the mean and the sample standard deviation (n − 1).",
+   f:[{id:"a",l:"Mean accuracy",v:87,t:0.05,u:"%"},
+      {id:"b",l:"Sample standard deviation",v:2.58,t:0.02,u:"%"}],
+   sol:"Mean = (84 + 86 + 90 + 88) / 4 = 87\nDeviations: −3, −1, +3, +1 → squared sum = 20\nSample variance = 20 / 3 = 6.667, so s = 2.58\nReport 87.0% ± 2.58%  (population SD would be 2.24)"}
+];
+
+var TABS = ["I · True or False","II · Matching","III · Multiple choice","IV · Computation","Results"];
+var MAXPTS = 50;
+var S;
+function fresh() { return {tab:0, tf:{}, mc:{}, mm:{}, mmDone:false, inp:{}, cp:{}}; }
+S = fresh();
+
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function fmt(n) { return String(Math.round(n * 10) / 10); }
+function parseNum(s) { s = String(s == null ? "" : s).replace(/[,\s%]/g,""); return s === "" ? NaN : Number(s); }
+function commas(n) { return n >= 1000 && Math.floor(n) === n ? n.toLocaleString("en-US") : String(n); }
+
+/* scoring */
+function tfScore() { var n = 0, i; for (i = 0; i < TF.length; i++) if (S.tf[i] !== undefined && S.tf[i] === TF[i][1]) n++; return n; }
+function tfDone() { return Object.keys(S.tf).length; }
+function mcScore() { var n = 0, i; for (i = 0; i < MC.length; i++) if (S.mc[i] === MC[i].a) n++; return n * 2; }
+function mcDone() { return Object.keys(S.mc).length; }
+function mmCorrect() { var n = 0, i; for (i = 0; i < 10; i++) if (S.mm[i] === MM_A[i]) n++; return n; }
+function mmFilled() { return Object.keys(S.mm).filter(function (k) { return S.mm[k]; }).length; }
+function cpScoreOf(p) { var r = S.cp[p]; if (!r) return 0; var ok = r.filter(Boolean).length; return CP[p].pts * ok / r.length; }
+function cpScore() { var n = 0, p; for (p = 0; p < CP.length; p++) n += cpScoreOf(p); return n; }
+function cpDone() { return Object.keys(S.cp).length; }
+function totals() {
+  var earned = tfScore() + mcScore() + (S.mmDone ? mmCorrect() : 0) + cpScore();
+  var att = tfDone() + mcDone() * 2 + (S.mmDone ? 10 : 0), p;
+  for (p = 0; p < CP.length; p++) if (S.cp[p]) att += CP[p].pts;
+  return {earned: earned, att: att};
+}
+
+/* chrome */
+function renderBar() {
+  var t = totals();
+  document.getElementById("score").innerHTML = fmt(t.earned) + " <small>/ " + MAXPTS + " pts</small>";
+  document.getElementById("att").style.width = (t.att / MAXPTS * 100) + "%";
+  document.getElementById("earn").style.width = (t.earned / MAXPTS * 100) + "%";
+  document.getElementById("attempted").textContent = fmt(t.att) + " of " + MAXPTS + " attempted";
+  var st = [tfDone() + "/10", (S.mmDone ? "10" : mmFilled()) + "/10", mcDone() + "/10", cpDone() + "/4", ""];
+  document.getElementById("tabs").innerHTML = TABS.map(function (n, i) {
+    return '<button class="tab" role="tab" data-act="tab" data-t="' + i + '" aria-selected="' + (S.tab === i) + '">' + n + (st[i] ? '<span class="st">' + st[i] + '</span>' : '') + '</button>';
+  }).join("");
+}
+
+function partHead(t, p) { return '<div class="part-head"><h2>' + t + '</h2><p>' + p + '</p></div>'; }
+function nextBtn(label) { return '<div class="actions"><button class="btn ghost" data-act="tab" data-t="' + (S.tab + 1) + '">' + label + '</button></div>'; }
+
+/* Part I */
+function viewTF() {
+  var h = partHead("True or False", "Pick True or False. Each statement is worth 1 point. For false statements the feedback gives the corrected version.");
+  h += '<div class="stack">' + TF.map(function (it, i) {
+    var a = S.tf[i], done = a !== undefined, right = done && a === it[1];
+    function b(v, label) {
+      var cls = "opt";
+      if (done) { if (v === it[1]) cls += " correct"; else if (v === a) cls += " wrong"; }
+      return '<button class="' + cls + '" data-act="tf" data-i="' + i + '" data-v="' + v + '"' + (done ? " disabled" : "") + '>' + label + '</button>';
+    }
+    return '<div class="q"><div class="qtop"><span class="num">' + (i + 1) + '</span><p class="qtext">' + it[0] + '</p></div>' +
+      '<div class="opts two">' + b(true, "True") + b(false, "False") + '</div>' +
+      (done ? '<div class="why"><b class="' + (right ? "ok" : "no") + '">' + (right ? "Correct. " : "Not quite. ") + '</b>' + it[2] + '</div>' : '') + '</div>';
+  }).join("") + '</div>';
+  return h + nextBtn("Next: Matching");
+}
+
+/* Part II */
+function viewMM() {
+  var h = partHead("Matching type", "Match each term to its description. Every letter is used once. Each correct match is worth 1 point.");
+  var rows = MM_T.map(function (t, i) {
+    var v = S.mm[i] || "", cls = "mrow", fix = "";
+    if (S.mmDone) { if (v === MM_A[i]) cls += " correct"; else { cls += " wrong"; fix = '<div class="fix">Answer: ' + MM_A[i] + '</div>'; } }
+    var opts = '<option value="">—</option>' + LET.map(function (l) { return '<option value="' + l + '"' + (v === l ? " selected" : "") + '>' + l + '</option>'; }).join("");
+    return '<div class="' + cls + '"><span class="num">' + (i + 1) + '</span><span class="t">' + t + '</span>' +
+      '<select id="mm' + i + '" data-act="mm" data-i="' + i + '" aria-label="Match for ' + esc(t) + '"' + (S.mmDone ? " disabled" : "") + '>' + opts + '</select>' + fix + '</div>';
+  }).join("");
+  var legend = '<ul class="legend"><li class="legend-title">Column B</li>' + MM_D.map(function (d, i) { return '<li><b>' + LET[i] + '</b><span>' + d + '</span></li>'; }).join("") + '</ul>';
+  var h2 = h + '<div class="mgrid"><div class="mrows">' + rows + '</div>' + legend + '</div>';
+  if (S.mmDone) {
+    h2 += '<div class="actions"><span class="note">You matched ' + mmCorrect() + ' of 10 correctly.</span></div>' + nextBtn("Next: Multiple choice");
+  } else {
+    h2 += '<div class="actions"><button class="btn" data-act="mmcheck" id="mmcheck"' + (mmFilled() === 10 ? "" : " disabled") + '>Check matches</button><span class="note" id="mmnote">Fill all 10 rows to check.</span></div>';
+  }
+  return h2;
+}
+
+/* Part III */
+function viewMC() {
+  var h = partHead("Multiple choice", "Choose the best answer. Each item is worth 2 points. Items marked Computation have a worked solution in the feedback.");
+  h += '<div class="stack">' + MC.map(function (it, i) {
+    var a = S.mc[i], done = a !== undefined, right = done && a === it.a;
+    var opts = it.o.map(function (o, j) {
+      var cls = "opt";
+      if (done) { if (j === it.a) cls += " correct"; else if (j === a) cls += " wrong"; }
+      return '<button class="' + cls + '" data-act="mc" data-i="' + i + '" data-o="' + j + '"' + (done ? " disabled" : "") + '><span class="k">' + "abcd"[j] + ')</span><span>' + o + '</span></button>';
+    }).join("");
+    return '<div class="q"><div class="qtop"><span class="num">' + (i + 1) + '</span><p class="qtext">' + it.q + (it.calc ? '<span class="tag">Computation</span>' : '') + '</p></div>' +
+      '<div class="opts">' + opts + '</div>' +
+      (done ? '<div class="why"><b class="' + (right ? "ok" : "no") + '">' + (right ? "Correct. " : "Not quite. ") + '</b>' + it.why + '</div>' : '') + '</div>';
+  }).join("") + '</div>';
+  return h + nextBtn("Next: Computation");
+}
+
+/* Part IV */
+function viewCP() {
+  var h = partHead("Computation problems", "Type your answers, then check. Commas and a % sign are fine. Rounded answers within a small tolerance count as correct.");
+  h += '<div class="stack">' + CP.map(function (p, pi) {
+    var res = S.cp[pi], earned = cpScoreOf(pi);
+    var fields = p.f.map(function (f, fi) {
+      var id = "cp" + pi + f.id, val = S.inp[id] || "", cls = "field", exp = "";
+      if (res) { cls += res[fi] ? " ok" : " no"; if (!res[fi]) exp = '<div class="exp">Expected ' + commas(f.v) + (f.u || "") + '</div>'; }
+      return '<div class="' + cls + '"><label for="' + id + '">' + f.l + '</label><input id="' + id + '" type="text" inputmode="decimal" autocomplete="off" data-act="inp" value="' + esc(val) + '"' + (res ? " disabled" : "") + ' placeholder="' + (f.u ? "value in " + f.u : "value") + '">' + exp + '</div>';
+    }).join("");
+    return '<div class="q"><div class="qtop"><span class="num">' + (pi + 1) + '</span><p class="qtext"><b>' + p.title + '</b></p><span class="pts">' + (res ? fmt(earned) + " / " : "") + p.pts + ' pts</span></div>' +
+      '<p class="given">' + p.given + '</p><div class="fields">' + fields + '</div>' +
+      (res ? '<div class="sol"><span class="sol-title">Worked solution</span>' + esc(p.sol) + '</div>' : '<div class="actions"><button class="btn" data-act="cpcheck" data-p="' + pi + '">Check answers</button></div>') + '</div>';
+  }).join("") + '</div>';
+  return h + '<div class="actions"><button class="btn ghost" data-act="tab" data-t="4">See results</button></div>';
+}
+
+/* Results */
+function missed(kind) {
+  var out = [], i;
+  if (kind === "tf") { for (i = 0; i < 10; i++) if (S.tf[i] !== TF[i][1]) out.push(i + 1); }
+  if (kind === "mc") { for (i = 0; i < 10; i++) if (S.mc[i] !== MC[i].a) out.push(i + 1); }
+  if (kind === "mm") { for (i = 0; i < 10; i++) if (!S.mmDone || S.mm[i] !== MM_A[i]) out.push(i + 1); }
+  if (kind === "cp") { for (i = 0; i < 4; i++) if (!S.cp[i] || cpScoreOf(i) < CP[i].pts) out.push(i + 1); }
+  return out;
+}
+function viewRes() {
+  var t = totals(), pct = Math.round(t.earned / MAXPTS * 100);
+  var msg = pct >= 90 ? "Excellent command of the material." : pct >= 75 ? "Solid. Review the items listed below." : pct >= 60 ? "Passing. Revisit the slides for the items listed below." : "Review the deck, especially the parts with missed items, then retake.";
+  if (t.att < MAXPTS) msg = "You have attempted " + fmt(t.att) + " of " + MAXPTS + " points. " + (t.att ? "Finish the remaining items for a full score." : "Start with Part I.");
+  var parts = [
+    ["Part I · True or False", tfScore(), 10, "tf"],
+    ["Part II · Matching", S.mmDone ? mmCorrect() : 0, 10, "mm"],
+    ["Part III · Multiple choice", mcScore(), 20, "mc"],
+    ["Part IV · Computation", cpScore(), 10, "cp"]
+  ];
+  var rows = parts.map(function (p) {
+    var m = missed(p[3]);
+    return '<div class="rrow"><div class="rl"><span>' + p[0] + '</span><span>' + fmt(p[1]) + ' / ' + p[2] + '</span></div>' +
+      '<div class="track"><i class="earn" style="width:' + (p[1] / p[2] * 100) + '%"></i></div>' +
+      '<div class="miss">' + (m.length ? "Items to review: " + m.join(", ") : "No items to review") + '</div></div>';
+  }).join("");
+  return partHead("Results", "Your score by part.") +
+    '<div class="result"><div class="big">' + fmt(t.earned) + ' <small>/ ' + MAXPTS + ' pts · ' + pct + '%</small></div><p>' + msg + '</p><div class="rows">' + rows + '</div>' +
+    '<div class="actions"><button class="btn" data-act="retake">Retake quiz</button></div></div>';
+}
+
+function render() {
+  var v = [viewTF, viewMM, viewMC, viewCP, viewRes][S.tab]();
+  document.getElementById("view").innerHTML = v;
+  renderBar();
+}
+
+/* events */
+var view = document.getElementById("view");
+document.addEventListener("click", function (e) {
+  var el = e.target.closest("[data-act]");
+  if (!el || el.disabled) return;
+  var act = el.getAttribute("data-act");
+  if (act === "tab") { S.tab = Number(el.getAttribute("data-t")); render(); window.scrollTo(0, 0); }
+  else if (act === "tf") { S.tf[Number(el.getAttribute("data-i"))] = el.getAttribute("data-v") === "true"; render(); }
+  else if (act === "mc") { S.mc[Number(el.getAttribute("data-i"))] = Number(el.getAttribute("data-o")); render(); }
+  else if (act === "mmcheck") { S.mmDone = true; render(); }
+  else if (act === "cpcheck") {
+    var p = Number(el.getAttribute("data-p"));
+    S.cp[p] = CP[p].f.map(function (f) {
+      var n = parseNum(S.inp["cp" + p + f.id]);
+      return !isNaN(n) && Math.abs(n - f.v) <= f.t;
+    });
+    render();
+  }
+  else if (act === "retake") { S = fresh(); render(); window.scrollTo(0, 0); }
+});
+document.addEventListener("change", function (e) {
+  var el = e.target;
+  if (el.getAttribute && el.getAttribute("data-act") === "mm") {
+    var i = Number(el.getAttribute("data-i"));
+    if (el.value) S.mm[i] = el.value; else delete S.mm[i];
+    var n = mmFilled(), btn = document.getElementById("mmcheck"), note = document.getElementById("mmnote");
+    if (btn) btn.disabled = n !== 10;
+    if (note) note.textContent = n === 10 ? "Ready to check." : "Fill all 10 rows to check (" + n + " of 10).";
+    renderBar();
+  }
+});
+document.addEventListener("input", function (e) {
+  var el = e.target;
+  if (el.getAttribute && el.getAttribute("data-act") === "inp") S.inp[el.id] = el.value;
+});
+render();
+</script>
+
+</body></html>

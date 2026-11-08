@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CPECOG2 Quiz Hub</title>
+  <style>
+    :root {
+      --bg: #eef4f0;
+      --card: #ffffff;
+      --ink: #17231c;
+      --muted: #607066;
+      --line: #d3dfd7;
+      --accent: #17633f;
+      --accent-soft: #e4f1e8;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    header {
+      padding: 24px 20px 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--card);
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+    h1 { margin: 0; color: var(--accent); font-size: clamp(26px, 4vw, 40px); }
+    .subtitle { margin: 4px 0 0; color: var(--muted); }
+    main { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 18px; padding: 18px 20px 28px; }
+    nav {
+      align-self: start;
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 8px;
+    }
+    nav button {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--card);
+      color: var(--ink);
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+    }
+    nav button:hover, nav button.active { border-color: var(--accent); background: var(--accent-soft); }
+    nav button.active { color: var(--accent); font-weight: 700; }
+    .viewer {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+    }
+    .viewer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .open {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    iframe { display: block; width: 100%; height: 78vh; min-height: 620px; border: 0; background: white; }
+    @media (max-width: 760px) {
+      main { grid-template-columns: 1fr; padding-inline: 12px; }
+      nav { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      iframe { height: 78vh; min-height: 560px; }
+    }
+  </style>
+  <style id="light-mode">
+    :root { color-scheme: light !important; }
+    html, body { color-scheme: light !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>CPECOG2 Quiz Hub</h1>
+      <p class="subtitle">All quiz activities in one interface. Choose a quiz from the menu.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <nav id="quiz-nav" aria-label="Quiz selection"></nav>
+    <section class="viewer" aria-label="Selected quiz">
+      <div class="viewer-bar">
+        <span id="selected-name"></span>
+        <a class="open" id="open-link" target="_blank" rel="noopener">Open separately</a>
+      </div>
+      <iframe id="quiz-frame" title="Selected quiz"></iframe>
+    </section>
+  </main>
+
+  <script>
+    const quizzes = [
+      ["100-Question Interactive Quiz", "CPECOG2 Quiz 2 Interactive.html"],
+      ["Quiz 2 Reviewer", "CPECOG2 Quiz 2 Reviewer.html"],
+      ["Word Bank Quiz", "CPECOG2 Quiz 2_ Word Bank (1–100).html"],
+      ["Recurrent Neural Networks", "Recurrent Networks Quiz.html"],
+      ["LSTM, GRU, and SRU", "LSTM GRU SRU Quiz.html"],
+      ["Transfer Learning in CNNs", "Transfer Learning Quiz.html"],
+      ["Multiple Choice Quiz", "CPECOG2 Multiple Choice.html"],
+      ["50-Item True or False", "50-Item True or False.html"]
+    ];
+
+    const nav = document.getElementById("quiz-nav");
+    const frame = document.getElementById("quiz-frame");
+    const selectedName = document.getElementById("selected-name");
+    const openLink = document.getElementById("open-link");
+
+    function selectQuiz(index) {
+      const [name, file] = quizzes[index];
+      document.querySelectorAll("nav button").forEach((button, i) => {
+        button.classList.toggle("active", i === index);
+        button.setAttribute("aria-current", i === index ? "page" : "false");
+      });
+      selectedName.textContent = name;
+      frame.src = encodeURI(file);
+      frame.title = name;
+      openLink.href = encodeURI(file);
+    }
+
+    quizzes.forEach(([name], index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = name;
+      button.addEventListener("click", () => selectQuiz(index));
+      nav.appendChild(button);
+    });
+
+    selectQuiz(0);
+  </script>
+</body>
+</html>

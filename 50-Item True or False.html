@@ -1,0 +1,302 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style id="light-mode">
+:root {
+  color-scheme: light !important;
+  --bg: #F2F6F3 !important; --surface: #FFFFFF !important; --ink: #14231B !important;
+  --muted: #566A5F !important; --line: #D3DDD6 !important; --primary: #0F5132 !important;
+  --on-primary: #FFFFFF !important; --primary-soft: #E3EFE7 !important; --gold: #B8891A !important;
+  --good: #14693B !important; --good-bg: #E2F3E8 !important; --bad: #B3372D !important;
+  --bad-bg: #FBE8E6 !important;
+}
+html, body { color-scheme: light !important; }
+</style></head><body>
+<title>50-Item True or False</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: one narrow reading column; masthead, a sticky score and tab bar, then one quiz part at a time. */
+:root {
+  --bg: #F2F6F3;
+  --surface: #FFFFFF;
+  --ink: #14231B;
+  --muted: #566A5F;
+  --line: #D3DDD6;
+  --primary: #0F5132;
+  --on-primary: #FFFFFF;
+  --primary-soft: #E3EFE7;
+  --gold: #B8891A;
+  --good: #14693B;
+  --good-bg: #E2F3E8;
+  --bad: #B3372D;
+  --bad-bg: #FBE8E6;
+  --display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1713; --surface: #16221C; --ink: #E6EFE9; --muted: #93A69B; --line: #2A3B32;
+    --primary: #6FCB9A; --on-primary: #0B1A12; --primary-soft: #1A2D23; --gold: #E0B341;
+    --good: #6FCB9A; --good-bg: #153326; --bad: #F29B92; --bad-bg: #3A1D1A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1713; --surface: #16221C; --ink: #E6EFE9; --muted: #93A69B; --line: #2A3B32;
+  --primary: #6FCB9A; --on-primary: #0B1A12; --primary-soft: #1A2D23; --gold: #E0B341;
+  --good: #6FCB9A; --good-bg: #153326; --bad: #F29B92; --bad-bg: #3A1D1A;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 16px/1.55 var(--body);
+  padding-block: 0 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 30; background: var(--bg);
+}
+.wrap { max-width: 760px; margin: 0 auto; }
+.masthead { padding-block: 28px 18px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+h1 { font: 700 clamp(28px, 6vw, 40px)/1.1 var(--display); margin: 0 0 8px; text-wrap: balance; color: var(--primary); }
+.sub { margin: 0; color: var(--muted); max-width: 60ch; }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); padding-top: 8px; }
+.score-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-bottom: 8px; }
+.score { font: 500 22px/1 var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.score small { font-size: 13px; color: var(--muted); }
+.track { flex: 1 1 160px; min-width: 120px; height: 8px; border-radius: 4px; background: var(--line); position: relative; overflow: hidden; }
+.track i { position: absolute; inset: 0 auto 0 0; display: block; }
+.track .att { background: var(--gold); opacity: .45; }
+.track .earn { background: var(--primary); }
+.attempted { font: 12px/1 var(--mono); color: var(--muted); white-space: nowrap; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.tab { border: 0; background: none; color: var(--muted); font: 500 14px/1.2 var(--body); padding: 10px 12px; border-bottom: 3px solid transparent; white-space: nowrap; cursor: pointer; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--gold); }
+.tab .st { font: 12px var(--mono); color: var(--muted); margin-left: 6px; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+main { padding-top: 22px; }
+.part-head h2 { font: 700 24px/1.2 var(--display); margin: 0 0 4px; text-wrap: balance; }
+.part-head p { margin: 0 0 18px; color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.q { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
+.qtop { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+.num { flex: none; font: 500 13px/1 var(--mono); color: var(--on-primary); background: var(--primary); border-radius: 6px; padding: 6px 7px; }
+.qtext { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.tag { display: inline-block; font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 3px 5px; margin-left: 8px; vertical-align: 2px; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opts.two { flex-direction: row; }
+.opts.two .opt { flex: 1; justify-content: center; }
+.opt { display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; min-width: 0; }
+.opt:hover:not(:disabled) { border-color: var(--primary); background: var(--primary-soft); }
+.opt:disabled { cursor: default; }
+.opt .k { flex: none; font: 500 13px/1.5 var(--mono); color: var(--muted); }
+.opt span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.opt.correct { border-color: var(--good); background: var(--good-bg); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.opt.picked { border-color: var(--primary); }
+.why { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--primary-soft); font-size: 14px; overflow-wrap: anywhere; }
+.why b.ok { color: var(--good); }
+.why b.no { color: var(--bad); }
+.calc { font-family: var(--mono); font-size: 13px; display: block; margin-top: 6px; color: var(--muted); }
+
+.mgrid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.mrows { display: flex; flex-direction: column; gap: 8px; }
+.mrow { display: grid; grid-template-columns: auto minmax(0, 1fr) 84px; gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.mrow.correct { border-color: var(--good); background: var(--good-bg); }
+.mrow.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.mrow .t { min-width: 0; overflow-wrap: anywhere; }
+.mrow .fix { grid-column: 2 / 4; font: 12px var(--mono); color: var(--bad); }
+select { font: 500 14px var(--mono); padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); width: 100%; }
+.legend { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.legend li { display: flex; gap: 10px; min-width: 0; }
+.legend b { flex: none; font: 500 13px/1.5 var(--mono); color: var(--primary); width: 1.2em; }
+.legend span { min-width: 0; overflow-wrap: anywhere; }
+.legend-title { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+
+.given { font-size: 15px; margin: 0 0 12px; overflow-wrap: anywhere; }
+.fields { display: flex; flex-direction: column; gap: 10px; }
+.field { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 190px); gap: 6px 12px; align-items: center; }
+.field label { font-size: 14px; min-width: 0; overflow-wrap: anywhere; }
+.field input { font: 500 15px var(--mono); font-variant-numeric: tabular-nums; width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.field input:disabled { opacity: 1; }
+.field.ok input { border-color: var(--good); background: var(--good-bg); }
+.field.no input { border-color: var(--bad); background: var(--bad-bg); }
+.field .exp { grid-column: 1 / -1; font: 12px var(--mono); color: var(--bad); }
+.sol { margin-top: 14px; padding: 12px; border-radius: 8px; background: var(--primary-soft); font: 13px/1.7 var(--mono); overflow-x: auto; white-space: pre; }
+.sol-title { font: 600 13px var(--body); display: block; margin-bottom: 4px; white-space: normal; }
+.pts { font: 500 12px var(--mono); color: var(--muted); margin-left: auto; white-space: nowrap; }
+.btn { font: 600 15px var(--body); padding: 11px 18px; border-radius: 8px; border: 1px solid var(--primary); background: var(--primary); color: var(--on-primary); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--primary); }
+.btn:disabled { opacity: .5; cursor: default; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+
+.result { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+.big { font: 700 clamp(40px, 10vw, 60px)/1 var(--display); color: var(--primary); }
+.big small { font: 500 18px var(--mono); color: var(--muted); }
+.rows { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
+.rrow .rl { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; margin-bottom: 5px; }
+.rrow .rl span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.rrow .miss { font: 12px var(--mono); color: var(--muted); margin-top: 4px; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .mgrid { grid-template-columns: minmax(0, 1fr); }
+  .field { grid-template-columns: minmax(0, 1fr); }
+  .opts.two { flex-direction: row; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .track i { transition: width .35s ease; }
+  .opt, .btn { transition: background .15s, border-color .15s; }
+}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">CPECOG2 · CpE Elective 2 · Deep Neural Networks</p>
+    <h1>50-Item True or False</h1>
+    <p class="sub">Transfer learning in CNNs, recurrent neural networks, and LSTM, GRU and SRU cells. One point per item. Items marked Computation need a quick calculation, and the feedback shows the working.</p>
+  </header>
+  <div class="bar">
+    <div class="score-row">
+      <div class="score" id="score" aria-live="polite">0 <small>/ 50 pts</small></div>
+      <div class="track" title="Gold: items answered. Green: points earned."><i class="att" id="att"></i><i class="earn" id="earn"></i></div>
+      <div class="attempted" id="attempted">0 of 50 answered</div>
+    </div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+  </div>
+  <main id="view"></main>
+</div>
+
+<script>
+var TOPICS = ["A · Transfer learning","B · Recurrent networks","C · LSTM, GRU, SRU"];
+var BLURB = [
+  "Feature extraction, fine-tuning, BatchNorm, leakage, and parameter and metric calculations.",
+  "Recurrence, BPTT, vanishing and exploding gradients, clipping, truncation, and training practice.",
+  "Gate equations, GRU and SRU design, parameter formulas, and one-step cell computations."
+];
+/* [topic, statement, answer, explanation, isComputation] */
+var ITEMS = [
+ [0,"Early CNN layers (edges, color blobs) are generally more transferable than the final class-specific layers.",true,"Early layers learn generic features. Final layers are tied to the source classes."],
+ [0,"In feature extraction, the pretrained backbone is trained at a small learning rate.",false,"In feature extraction the backbone is frozen and only the new head is trained. A small backbone learning rate belongs to fine-tuning."],
+ [0,"The new head is trained first (warm-up) because its random initialization produces large gradients that can damage pretrained weights.",true,"Warm-up protects the pretrained weights from the large early gradients of the random head."],
+ [0,"When fine-tuning on small batches, BatchNorm layers should be kept in training mode so they adapt to the new data.",false,"Keep BatchNorm in inference mode. Small-batch statistics are noisy and drift from the pretrained values, and accuracy can collapse."],
+ [0,"He, Girshick, and Dollár (2019) showed that ImageNet pretraining always beats random initialization on COCO detection.",false,"Random initialization matched pretrained results given enough iterations and suitable normalization. Pretraining mainly sped up early convergence."],
+ [0,"Yosinski et al. (2014) found that transferred layers that were then fine-tuned generalized better than training the target network from scratch.",true,"Fine-tuned transferred layers beat random initialization in their experiments."],
+ [0,"Grayscale images such as X-rays can be replicated to three channels to fit a pretrained RGB network.",true,"Replicate the channel three times, or sum the first-layer filters over RGB into one channel."],
+ [0,"In Keras, you must recompile the model after changing <code>trainable</code> flags.",true,"The change only takes effect after model.compile() is called again."],
+ [0,"For a small target dataset that is very different from the source, the recommended approach is to fine-tune all layers at a high learning rate.",false,"Use cautious, partial transfer: mid-level features, fine-tune only a few layers, augment heavily, and compare against scratch."],
+ [0,"Splitting a medical dataset by individual image (instead of by patient) is an acceptable way to prevent leakage.",false,"Split by patient, subject, or scene. An image-level split puts the same patient in both train and test."],
+ [0,"A ResNet-50 (2048-d feature vector) adapted to 8 classes has 16,392 parameters in its new fc layer.",true,"2048 × 8 + 8 = 16,384 + 8 = 16,392.",true],
+ [0,"VGG-16's three FC layers hold 123.6 M of its 138.4 M parameters, so the head is only about 45% of the model.",false,"123.6 / 138.4 = 0.893, so the head is about 89% of the model.",true],
+ [0,"With a head learning rate of 1e-3, the \"10× to 100× smaller\" rule puts the backbone learning rate between 1e-4 and 1e-5.",true,"1e-3 ÷ 10 = 1e-4 and 1e-3 ÷ 100 = 1e-5.",true],
+ [0,"A red-channel pixel of value 200, scaled to [0, 1] and normalized with mean 0.485 and std 0.229, becomes approximately 1.31.",true,"200 / 255 = 0.7843, and (0.7843 − 0.485) / 0.229 = 1.307.",true],
+ [0,"For a small target dataset that is similar to the source, full fine-tuning at a high learning rate is the best strategy.",false,"Small and similar data calls for feature extraction. High-LR full fine-tuning risks overfitting and destroying pretrained features."],
+ [0,"Per-class F1 scores of 0.92, 0.85, and 0.60 give a macro-F1 of about 0.79.",true,"(0.92 + 0.85 + 0.60) / 3 = 2.37 / 3 = 0.79.",true],
+ [0,"Replacing the ResNet-50 head with 12 outputs (23,508,032 backbone parameters) and using feature extraction makes about 10% of the model trainable.",false,"Head = 2048 × 12 + 12 = 24,588. 24,588 / 23,532,620 ≈ 0.104%, not 10%.",true],
+
+ [1,"The weights W<sub>xh</sub>, W<sub>hh</sub>, and W<sub>hy</sub> of a vanilla RNN are the same at every time step.",true,"Parameter sharing across time lets a pattern learned at one position be recognized at any other, and lets T vary."],
+ [1,"The number of parameters in a vanilla RNN grows with the sequence length T.",false,"Parameter count is independent of T. Only compute, which grows as T·H(D + H), and stored states depend on T."],
+ [1,"Backpropagation Through Time (BPTT) is a new learning algorithm that is different from ordinary backpropagation.",false,"BPTT is ordinary backpropagation applied to the unrolled graph, a deep feed-forward network with tied weights."],
+ [1,"Because the weights are tied, the gradient of a shared weight is the sum of its contributions from all time steps.",true,"Each of the T copies of the cell contributes a term, and the terms are summed."],
+ [1,"Gradient norm clipping is the main remedy for vanishing gradients.",false,"Clipping prevents explosion. Gated units (LSTM, GRU) make it possible to preserve information over long spans."],
+ [1,"In truncated BPTT, the hidden state value is carried into the next chunk, but the gradient is cut at the chunk border.",true,"The forward pass still sees earlier context. The carried state is detached, so no gradient crosses the border."],
+ [1,"A bidirectional RNN is a good choice for streaming inference or forecasting.",false,"It needs the whole sequence, so it suits offline tasks only."],
+ [1,"Storing the states for BPTT over a whole sequence needs memory that does not depend on T.",false,"Memory is O(T·H), growing linearly with T. This motivates truncated BPTT, which needs O(k)."],
+ [1,"Perplexity for a language model equals the exponential of the mean cross-entropy.",true,"Perplexity = exp(mean cross-entropy). Lower is better."],
+ [1,"A vanilla RNN with D = 30 inputs, H = 64 hidden units, and C = 5 classes has 6,405 parameters.",true,"H(D + H + 1) + C(H + 1) = 64 × 95 + 5 × 65 = 6,080 + 325 = 6,405.",true],
+ [1,"A scalar RNN with w = 0.5, u = 0.8, b = 0, h<sub>0</sub> = 0, x<sub>1</sub> = 2, and x<sub>2</sub> = 0 gives h<sub>2</sub> = 0.762.",false,"h<sub>1</sub> = tanh(1) = 0.762, but h<sub>2</sub> = tanh(0.8 × 0.762) = tanh(0.609) = 0.543.",true],
+ [1,"Clipping the gradient g = [12, 16] to a norm threshold of τ = 5 gives [3, 4].",true,"‖g‖ = 20 > 5, so scale by 5/20 = 0.25: [12, 16] × 0.25 = [3, 4].",true],
+ [1,"A per-step gradient factor of 0.8 applied over 10 steps leaves about 80% of the gradient.",false,"0.8¹⁰ = 0.107, so only about 10.7% remains.",true],
+ [1,"For a softmax output with cross-entropy loss, the output gradient is g<sub>t</sub> = softmax(o<sub>t</sub>) − y<sub>t</sub>, with y<sub>t</sub> one-hot.",true,"This has the same form as in a feed-forward classifier. For [0.7, 0.2, 0.1] with true class 2 it is [0.7, −0.8, 0.1].",true],
+ [1,"When sequences are padded to equal length, the padded steps should be masked out of the loss.",true,"Masking makes the padded steps contribute no gradient. Packing also skips them."],
+ [1,"For time-series data, the correct split is to shuffle individual steps randomly across train and test.",false,"Shuffle whole sequences, never steps inside one. For time series, split chronologically or use walk-forward validation."],
+ [1,"In Keras, <code>stateful=True</code> with batches of consecutive windows carries the state across chunks, as in truncated BPTT.",true,"In PyTorch the equivalent is <code>h = h.detach()</code> at the start of each chunk."],
+
+ [2,"An LSTM has four weight blocks, whereas a GRU has three.",true,"LSTM: 4H(D + H + 1). GRU: 3H(D + H + 1)."],
+ [2,"A GRU keeps a separate cell state c<sub>t</sub> in addition to the hidden state h<sub>t</sub>.",false,"A GRU merges them into one state h<sub>t</sub>, which is fully exposed. Only the LSTM keeps both."],
+ [2,"The forget gate was part of the original 1997 LSTM design by Hochreiter and Schmidhuber.",false,"It was added by Gers et al. (2000) so the cell can learn to reset itself."],
+ [2,"SRU gates depend on an elementwise term v ⊙ c<sub>t−1</sub> instead of a full matrix times h<sub>t−1</sub>.",true,"Removing the matrix multiply on the previous state lets the heavy products be batched over time."],
+ [2,"SRU computes W x<sub>t</sub>, W<sub>f</sub> x<sub>t</sub>, and W<sub>r</sub> x<sub>t</sub> for all T steps in one batched matrix multiplication.",true,"Only cheap elementwise updates remain sequential."],
+ [2,"In an LSTM, a forget gate value near 0 means the old cell state is kept.",false,"Near 1 keeps the old cell state. Near 0 erases it."],
+ [2,"Greff et al. (2017) found that one gating variant was clearly better than the standard LSTM.",false,"They found no variant clearly better than the standard LSTM."],
+ [2,"The SRU highway term (1 − r<sub>t</sub>) ⊙ x<sub>t</sub> assumes D = H, or a projection of x<sub>t</sub>.",true,"The skip connection adds x<sub>t</sub> directly, so its size must match the hidden size."],
+ [2,"The GRU update gate z<sub>t</sub> interpolates between keeping the old state and writing the candidate.",true,"h<sub>t</sub> = (1 − z<sub>t</sub>) ⊙ h<sub>t−1</sub> + z<sub>t</sub> ⊙ h̃<sub>t</sub>."],
+ [2,"SRU is guaranteed to train 5 to 9 times faster than a cuDNN LSTM on every task and hardware.",false,"Lei et al. report up to 5 to 9 times on some tasks. The gain depends on the task and the hardware."],
+ [2,"An LSTM with D = 64 and H = 32 has 12,416 parameters.",true,"4 × 32 × (64 + 32 + 1) = 128 × 97 = 12,416.",true],
+ [2,"A GRU with D = 50 and H = 100 has 15,100 parameters.",false,"3 × 100 × (50 + 100 + 1) = 300 × 151 = 45,300. (15,100 is a vanilla RNN.)",true],
+ [2,"An SRU with D = H = 64 has 12,544 parameters.",true,"3HD + 4H = 3 × 4,096 + 256 = 12,288 + 256 = 12,544.",true],
+ [2,"An LSTM step with c<sub>t−1</sub> = 1.5, f<sub>t</sub> = 0.6, i<sub>t</sub> = 0.5, and g<sub>t</sub> = 0.8 gives c<sub>t</sub> = 1.3.",true,"c<sub>t</sub> = 0.6(1.5) + 0.5(0.8) = 0.9 + 0.4 = 1.3.",true],
+ [2,"A GRU step with z<sub>t</sub> = 0.25, h<sub>t−1</sub> = 0.8, and candidate h̃<sub>t</sub> = −0.4 gives h<sub>t</sub> = 0.7.",false,"h<sub>t</sub> = 0.75(0.8) + 0.25(−0.4) = 0.60 − 0.10 = 0.5.",true],
+ [2,"With a forget gate held at 0.95 for 20 steps along the cell-state path, about 36% of the gradient remains.",true,"0.95²⁰ = 0.358, about 36%.",true]
+];
+var N = ITEMS.length;
+var S = {tab:0, a:{}};
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function ofTopic(t){var r=[],i;for(i=0;i<N;i++)if(ITEMS[i][0]===t)r.push(i);return r;}
+function correct(i){return S.a[i]!==undefined && S.a[i]===ITEMS[i][2];}
+function stats(t){var ids=t===undefined?ITEMS.map(function(_,i){return i;}):ofTopic(t),c=0,d=0;
+  ids.forEach(function(i){if(S.a[i]!==undefined){d++;if(correct(i))c++;}});return {c:c,d:d,n:ids.length};}
+
+function renderBar(){
+  var s=stats();
+  document.getElementById("score").innerHTML=s.c+" <small>/ "+N+" pts</small>";
+  document.getElementById("att").style.width=(s.d/N*100)+"%";
+  document.getElementById("earn").style.width=(s.c/N*100)+"%";
+  document.getElementById("attempted").textContent=s.d+" of "+N+" answered";
+  var names=TOPICS.concat(["Results"]);
+  document.getElementById("tabs").innerHTML=names.map(function(n,i){
+    var st=i<3?stats(i):null;
+    return '<button class="tab" role="tab" data-act="tab" data-t="'+i+'" aria-selected="'+(S.tab===i)+'">'+n+(st?'<span class="st">'+st.d+'/'+st.n+'</span>':'')+'</button>';
+  }).join("");
+}
+
+function viewTopic(t){
+  var ids=ofTopic(t),first=ids[0]+1,last=ids[ids.length-1]+1;
+  var h='<div class="part-head"><h2>'+TOPICS[t]+'</h2><p>Items '+first+' to '+last+'. '+BLURB[t]+'</p></div><div class="stack">';
+  ids.forEach(function(i){
+    var it=ITEMS[i],a=S.a[i],done=a!==undefined,right=done&&a===it[2];
+    function b(v,l){var c="opt";if(done){if(v===it[2])c+=" correct";else if(v===a)c+=" wrong";}
+      return '<button class="'+c+'" data-act="ans" data-i="'+i+'" data-v="'+v+'"'+(done?" disabled":"")+'>'+l+'</button>';}
+    h+='<div class="q"><div class="qtop"><span class="num">'+(i+1)+'</span><p class="qtext">'+it[1]+(it[4]?'<span class="tag">Computation</span>':'')+'</p></div>'+
+      '<div class="opts two">'+b(true,"True")+b(false,"False")+'</div>'+
+      (done?'<div class="why"><b class="'+(right?"ok":"no")+'">'+(right?"Correct. ":"Not quite. ")+'</b>'+(it[2]?"The statement is true. ":"The statement is false. ")+it[3]+'</div>':'')+'</div>';
+  });
+  h+='</div><div class="actions"><button class="btn ghost" data-act="tab" data-t="'+(t+1)+'">'+(t<2?"Next: "+TOPICS[t+1].slice(4):"See results")+'</button></div>';
+  return h;
+}
+
+function viewRes(){
+  var s=stats(),pct=Math.round(s.c/N*100);
+  var msg=pct>=90?"Excellent command of the material.":pct>=75?"Solid. Review the items listed below.":pct>=60?"Passing. Revisit the slides for the items listed below.":"Review the slides for the topics with missed items, then retake.";
+  if(s.d<N)msg="You have answered "+s.d+" of "+N+" items. "+(s.d?"Finish the rest for a full score.":"Start with Topic A.");
+  var rows=TOPICS.map(function(nm,t){
+    var st=stats(t),miss=ofTopic(t).filter(function(i){return !correct(i);}).map(function(i){return i+1;});
+    return '<div class="rrow"><div class="rl"><span>'+nm+'</span><span>'+st.c+' / '+st.n+'</span></div><div class="track"><i class="earn" style="width:'+(st.c/st.n*100)+'%"></i></div><div class="miss">'+(miss.length?"Items to review: "+miss.join(", "):"No items to review")+'</div></div>';
+  }).join("");
+  var tc=0,td=0,i;for(i=0;i<N;i++)if(ITEMS[i][4]&&S.a[i]!==undefined){td++;if(correct(i))tc++;}
+  return '<div class="part-head"><h2>Results</h2><p>Your score by topic.</p></div><div class="result"><div class="big">'+s.c+' <small>/ '+N+' pts · '+pct+'%</small></div><p>'+msg+'</p><div class="rows">'+rows+
+    '<div class="rrow"><div class="rl"><span>Computation items only</span><span>'+tc+' / '+ITEMS.filter(function(x){return x[4];}).length+'</span></div><div class="miss">'+td+' answered</div></div></div>'+
+    '<div class="actions"><button class="btn" data-act="retake">Retake quiz</button></div></div>';
+}
+
+function render(){
+  document.getElementById("view").innerHTML=S.tab<3?viewTopic(S.tab):viewRes();
+  renderBar();
+}
+document.addEventListener("click",function(e){
+  var el=e.target.closest("[data-act]");if(!el||el.disabled)return;
+  var act=el.getAttribute("data-act");
+  if(act==="tab"){S.tab=Number(el.getAttribute("data-t"));render();window.scrollTo(0,0);}
+  else if(act==="ans"){S.a[Number(el.getAttribute("data-i"))]=el.getAttribute("data-v")==="true";render();}
+  else if(act==="retake"){S={tab:0,a:{}};render();window.scrollTo(0,0);}
+});
+render();
+</script>
+
+</body></html>

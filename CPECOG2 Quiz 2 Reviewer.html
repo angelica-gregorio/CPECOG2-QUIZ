@@ -1,0 +1,1082 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>CPECOG2 Quiz 2 Reviewer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: one exam-paper column; sticky toolbar with set tabs + grading actions; each question is a numbered item that turns green/red after checking. Colors borrow the lecture diagrams' green (hidden state) and gold (output). */
+:root{
+  --bg:#F3F5F1; --surface:#FFFFFF; --ink:#16201B; --muted:#5A665F; --line:#D9DFD9;
+  --accent:#1D6A46; --accent-ink:#FFFFFF; --accent-soft:#E2EFE7; --gold:#9A6B12; --gold-soft:#F6EBD3;
+  --ok:#1D7A4B; --ok-soft:#E1F2E8; --bad:#B03535; --bad-soft:#F8E3E1;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1311; --surface:#161D1A; --ink:#E4EBE6; --muted:#98A59E; --line:#2A3531;
+  --accent:#62C08F; --accent-ink:#0B1410; --accent-soft:#18302A; --gold:#DDB061; --gold-soft:#2E2715;
+  --ok:#62C08F; --ok-soft:#163026; --bad:#E57B74; --bad-soft:#3A1E1C; color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#0E1311; --surface:#161D1A; --ink:#E4EBE6; --muted:#98A59E; --line:#2A3531;
+  --accent:#62C08F; --accent-ink:#0B1410; --accent-soft:#18302A; --gold:#DDB061; --gold-soft:#2E2715;
+  --ok:#62C08F; --ok-soft:#163026; --bad:#E57B74; --bad-soft:#3A1E1C; color-scheme:dark; }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);z-index:10;background:var(--bg)}
+.wrap{max-width:820px;margin:0 auto;padding-block:32px 80px}
+header.top{display:grid;gap:10px;padding-bottom:20px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,6vw,44px);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.lede{color:var(--muted);margin:0;max-width:62ch}
+.coverage{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 0;padding:0;list-style:none}
+.coverage li{font-size:13px;padding:3px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:var(--surface)}
+
+.toolbar{position:sticky;top:env(safe-area-inset-top, 0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding-block:10px}
+#tabs{display:flex;flex-wrap:wrap;gap:8px 16px;min-width:0}
+.tab-group{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0}
+.tab-label{font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px}
+.set-title{margin-top:28px;display:grid;gap:4px}
+@media (max-width:640px){.toolbar{position:static}}
+.set-title h2{font-family:var(--f-display);font-weight:800;font-size:clamp(22px,4vw,28px);line-height:1.15;margin:0;text-wrap:balance}
+.tab{font:600 14px var(--f-body);border:0;background:transparent;color:var(--muted);padding:7px 14px;border-radius:7px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.actions{display:flex;flex-wrap:wrap;gap:6px}
+.btn{font:600 14px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:8px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible,.tab:focus-visible,select:focus-visible,.choice input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}
+
+.scorecard{margin-top:18px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.scorecard div{background:var(--surface);padding:10px 14px;display:grid;gap:2px}
+.scorecard .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.scorecard .v{font:600 22px var(--f-display);font-variant-numeric:tabular-nums}
+.scorecard .total .v{color:var(--accent)}
+@media (max-width:520px){.scorecard{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.part{margin-top:36px}
+.part-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:6px}
+.part-head h2{font-family:var(--f-display);font-weight:800;font-size:22px;margin:0}
+.part-head .pts{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.directions{color:var(--muted);font-size:14px;margin:0 0 8px}
+
+.q{display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:4px 10px;padding:16px 12px 16px 0;border-bottom:1px solid var(--line);position:relative}
+.q .n{font:500 14px var(--f-mono);color:var(--muted);padding-top:2px;text-align:right}
+.q .body{min-width:0;display:grid;gap:10px}
+.q .stem{margin:0}
+.calc-tag{display:inline-block;font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:var(--gold-soft);padding:1px 7px;border-radius:4px;margin-right:6px;vertical-align:2px}
+.q.correct{box-shadow:inset 3px 0 0 var(--ok)}
+.q.wrong{box-shadow:inset 3px 0 0 var(--bad)}
+.q.correct,.q.wrong{padding-left:10px}
+
+.tf{display:flex;gap:8px;flex-wrap:wrap}
+.choice{position:relative;display:block;cursor:pointer}
+.choice input{position:absolute;opacity:0;width:1px;height:1px}
+.choice > span{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 12px}
+.tf .choice > span{min-width:96px;justify-content:center;font-weight:600}
+.choice span b{font:500 13px var(--f-mono);color:var(--muted);min-width:1.2em;padding-top:2px}
+.choice input:checked+span{border-color:var(--accent);background:var(--accent-soft)}
+.choice input:checked+span b{color:var(--accent)}
+.q.locked .choice{cursor:default}
+select:disabled{opacity:1;color:var(--ink)}
+.choice.is-key > span{border-color:var(--ok);background:var(--ok-soft)}
+.choice.is-miss > span{border-color:var(--bad);background:var(--bad-soft)}
+.opts{display:grid;gap:6px}
+
+.feedback{font-size:14px;border-radius:8px;padding:10px 12px;background:var(--accent-soft);color:var(--ink)}
+.feedback .verdict{font-weight:600;margin-right:6px}
+.q.correct .feedback .verdict{color:var(--ok)}
+.q.wrong .feedback .verdict{color:var(--bad)}
+
+.match-block{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.match-block h3{font-family:var(--f-display);font-size:17px;margin:0 0 4px}
+.match-block .directions{margin-bottom:10px}
+.bank{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;margin:0 0 6px;padding:10px 12px;border-radius:8px;background:var(--bg);list-style:none;font-size:14px}
+.bank li{display:flex;gap:8px}
+.bank li b{font-family:var(--f-mono);color:var(--accent)}
+@media (max-width:600px){.bank{grid-template-columns:minmax(0,1fr)}}
+.match-block .q{padding-right:0}
+.mrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.mrow .stem{flex:1 1 260px;min-width:0}
+select{font:500 15px var(--f-mono);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-width:84px}
+
+.math{font-family:var(--f-mono);font-size:.92em;background:var(--bg);padding:1px 5px;border-radius:4px;white-space:nowrap}
+.eq{font-family:var(--f-mono);font-size:14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px;overflow-x:auto;white-space:nowrap}
+.foot{margin-top:40px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px}
+@media (prefers-reduced-motion: no-preference){ .choice span,.btn,.tab{transition:background-color .15s,border-color .15s} }
+</style>
+<style id="light-mode">
+:root {
+  color-scheme: light !important;
+  --bg: #F3F5F1 !important; --surface: #FFFFFF !important; --ink: #16201B !important;
+  --muted: #5A665F !important; --line: #D9DFD9 !important; --accent: #1D6A46 !important;
+  --accent-ink: #FFFFFF !important; --accent-soft: #E2EFE7 !important; --gold: #9A6B12 !important;
+  --gold-soft: #F6EBD3 !important; --ok: #1D7A4B !important; --ok-soft: #E1F2E8 !important;
+  --bad: #B03535 !important; --bad-soft: #F8E3E1 !important;
+}
+html, body { color-scheme: light !important; }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">CPECOG2 · CpE Elective 2 · Quiz 2</div>
+    <h1>Quiz 2 Practice Exams</h1>
+    <p class="lede">Three mixed sets cover all four Quiz 2 lectures. Four lecture quizzes each cover one slide deck. Every quiz has 10 true-or-false items, 10 matching items, and 15 multiple-choice items, including computations. Each answer is checked the moment you pick it, with the explanation shown right below. Your first pick counts. Use <b>Clear set</b> to retake a quiz.</p>
+    <ul class="coverage">
+      <li>Recurrent Neural Networks &amp; BPTT</li>
+      <li>Challenges &amp; Solutions in Training RNNs</li>
+      <li>RNN Cells: LSTM, GRU, SRU</li>
+      <li>Transfer Learning in CNNs</li>
+    </ul>
+  </header>
+
+  <div class="toolbar">
+    <div id="tabs"></div>
+    <div class="actions">
+      <button class="btn primary" id="btn-check" type="button">Finish set</button>
+      <button class="btn" id="btn-key" type="button">Show answer key</button>
+      <button class="btn" id="btn-reset" type="button">Clear set</button>
+    </div>
+  </div>
+
+  <div class="scorecard" id="scorecard" aria-live="polite">
+    <div><span class="k">Part I · T/F</span><span class="v" id="sc-tf">– / 10</span></div>
+    <div><span class="k">Part II · Matching</span><span class="v" id="sc-match">– / 10</span></div>
+    <div><span class="k">Part III · MC</span><span class="v" id="sc-mc">– / 15</span></div>
+    <div class="total"><span class="k">Total · <span id="sc-done">0 of 35 answered</span></span><span class="v" id="sc-total">– / 35</span></div>
+  </div>
+
+  <main id="exam"></main>
+
+  <p class="foot">Built from the CPECOG2 Quiz 2 slide decks (Dr. Roy Francis Navea, DECEE, DLSU). Numbers in computation items were checked in code; rounding follows the slides (3 decimal places unless stated). Your answers are kept in this browser only.</p>
+</div>
+
+<script>
+const M = s => `<span class="math">${s}</span>`;
+
+const SETS = [
+/* ======================= SET 1 ======================= */
+{ id: 1, name: "Set 1",
+  tf: [
+    ["In a vanilla RNN, the weights W<sub>xh</sub>, W<sub>hh</sub>, and W<sub>hy</sub> are the same at every time step.", true,
+     "Parameter sharing: one set of weights is reused at every step, which is why a pattern learned at one position is recognized at any other."],
+    ["The number of parameters in an RNN grows linearly with the sequence length T.", false,
+     "Parameter count is independent of T. Compute and BPTT memory grow with T, but the weights do not."],
+    ["Backpropagation Through Time (BPTT) is a new learning algorithm, separate from ordinary backpropagation.", false,
+     "BPTT is ordinary backpropagation applied to the unrolled graph (Werbos, 1990)."],
+    ["Gradient clipping is mainly a remedy for vanishing gradients.", false,
+     "Clipping caps the gradient norm, so it fixes exploding gradients. Gated units (LSTM, GRU) are the main fix for vanishing."],
+    ["In an LSTM, the direct gradient path through the cell state satisfies ∂c<sub>t</sub>/∂c<sub>t−1</sub> = f<sub>t</sub> (elementwise).", true,
+     "Because c<sub>t</sub> = f<sub>t</sub>⊙c<sub>t−1</sub> + i<sub>t</sub>⊙g<sub>t</sub> is additive, the direct path is just the forget gate. With f<sub>t</sub> ≈ 1 the gradient passes almost unchanged (constant error carousel)."],
+    ["A bidirectional RNN is a good choice for real-time forecasting of the next value in a stream.", false,
+     "A bidirectional RNN needs the whole sequence, including the future. Use it only for offline tasks, never for forecasting or streaming."],
+    ["In transfer learning, the output layer is usually replaced because the target label space differs from the source's.", true,
+     "The 1,000 ImageNet classes do not match your C classes, so the head is replaced while the convolutional backbone is reused."],
+    ["Early CNN layers learn class-specific features and are the least transferable layers.", false,
+     "Early layers learn edges, color blobs and Gabor-like filters, which are the most general. Final layers are the most class-specific."],
+    ["Truncated BPTT carries the hidden-state value across chunk borders but stops the gradient there.", true,
+     "The state is detached (PyTorch: h = h.detach()), so the forward pass keeps context while no gradient crosses the border."],
+    ["Randomly shuffling the individual days of a time series before splitting into train and test can cause leakage.", true,
+     "The model sees tomorrow while studying today, so the test score looks excellent but is fake. Split chronologically."]
+  ],
+  match: [
+    { title: "A. Gates and their roles",
+      intro: "Match each gate to what it does. One choice is not used.",
+      bank: [
+        "Interpolates between keeping the old state and writing the candidate h̃<sub>t</sub>",
+        "Controls how much of the cell is exposed as the hidden state h<sub>t</sub>",
+        "Caps the size of the gradient while keeping its direction",
+        "Scales the old cell state: near 1 keeps it, near 0 erases it",
+        "Controls how much of the previous state is used to form the candidate h̃<sub>t</sub>",
+        "Decides how much new candidate content g<sub>t</sub> is written into the cell"
+      ],
+      items: [
+        ["LSTM forget gate f<sub>t</sub>", "D"],
+        ["LSTM input gate i<sub>t</sub>", "F"],
+        ["LSTM output gate o<sub>t</sub>", "B"],
+        ["GRU update gate z<sub>t</sub>", "A"],
+        ["GRU reset gate r<sub>t</sub>", "E"]
+      ],
+      why: "Forget scales c<sub>t−1</sub>; input admits g<sub>t</sub>; output exposes tanh(c<sub>t</sub>) as h<sub>t</sub>. The GRU update gate acts like a combined forget and input gate, and the reset gate shapes the candidate. Gradient clipping (C) is not a gate." },
+    { title: "B. Symptom to first remedy",
+      intro: "Match each training symptom to the first thing to try (the “doctor’s checklist”). One choice is not used.",
+      bank: [
+        "Dropout, early stopping, more data",
+        "Clip the gradient",
+        "Compare with a simple persistence baseline",
+        "Check for leakage and split by time",
+        "Use a gated cell (LSTM/GRU) and consider skip connections",
+        "Cut sequences into shorter chunks (truncated BPTT)"
+      ],
+      items: [
+        ["Loss suddenly spikes or turns into NaN", "B"],
+        ["Training is slow and memory is full", "F"],
+        ["Remembers the recent past, forgets the distant past", "E"],
+        ["Great training score, poor real score", "A"],
+        ["Score looks too good to be true", "D"]
+      ],
+      why: "These are the slide’s symptom-to-remedy pairs. C (baseline) answers “unsure the model is any good,” which is not listed." }
+  ],
+  mc: [
+    { q: "Sentiment classification of a review, where a whole sentence goes in and one label comes out, is which sequence task pattern?",
+      o: ["One-to-many", "Many-to-one", "Many-to-many (aligned)", "Encoder-decoder"], a: 1,
+      why: "A sequence in and one label out is many-to-one, like ECG-beat classification. One-to-many is image captioning; encoder-decoder is translation." },
+    { q: "Why is tanh the standard activation in a vanilla RNN cell?",
+      o: ["It is unbounded, so the state can grow to store more memory", "Its derivative is always exactly 1, so gradients never vanish", "It is bounded in (−1, 1) and zero-centered, and its derivative 1 − h² is at most 1", "It outputs probabilities that sum to 1"], a: 2,
+      why: "tanh keeps the state bounded and zero-centered. Its derivative is at most 1, which is why products of Jacobians tend to shrink (vanishing gradients)." },
+    { q: "The forget gate was not part of the original 1997 LSTM. Who added it?",
+      o: ["Gers, Schmidhuber, and Cummins (2000)", "Cho et al. (2014)", "Greff et al. (2017)", "Lei et al. (2018)"], a: 0,
+      why: "Gers et al. (2000), “Learning to forget.” Cho et al. introduced the GRU, Greff et al. ran the large LSTM study, and Lei et al. proposed SRU." },
+    { q: "When fine-tuning, why should you first train (warm up) the new head with the backbone frozen?",
+      o: ["Frozen layers skip the forward pass, so warm-up is faster", "A randomly initialized head produces large gradients that can damage pretrained weights if everything is trainable at once", "BatchNorm layers cannot be used until the head converges", "The optimizer can only hold one parameter group at a time"], a: 1,
+      why: "The new head starts random. Its early, large gradients would flow into and disturb the pretrained backbone, so warm it up first, then unfreeze top blocks." },
+    { q: "Fine-tuned accuracy suddenly collapses after training on small batches of the new data. What is the most likely cause and fix?",
+      o: ["The learning rate is too small; raise it 100×", "BatchNorm running statistics were updated on tiny batches; keep BN in inference mode", "The head is too small; add three FC layers", "Images were normalized; remove normalization"], a: 1,
+      why: "In training mode BN updates its running mean and variance, which drift on small batches. Keep BN frozen: Keras base(x, training=False), PyTorch .eval() on BN layers." },
+    { q: "Your target dataset is small (a few hundred images) and similar to ImageNet. Which strategy does the guideline suggest?",
+      o: ["Train from scratch", "Full fine-tuning of all layers", "Feature extraction: train only a new head on the frozen backbone", "Reinitialize the deeper stages and train them"], a: 2,
+      why: "Small and similar → feature extraction. Fine-tuning with so little data risks overfitting." },
+    { q: "Which cell removes the matrix multiply on the previous state, so the heavy products can be batched across all T steps?",
+      o: ["LSTM", "GRU", "Vanilla (Elman) RNN", "SRU"], a: 3,
+      why: "SRU gates depend on x<sub>t</sub> and an elementwise v⊙c<sub>t−1</sub>, not a full matrix times h<sub>t−1</sub>, so W x<sub>t</sub>, W<sub>f</sub> x<sub>t</sub>, W<sub>r</sub> x<sub>t</sub> are computed in one batched multiply." },
+    { calc: true, q: `A vanilla RNN classifier has D = 40 input features, H = 64 hidden units, and C = 5 output classes. Using ${M("H(D + H + 1) + C(H + 1)")}, how many parameters does it have?`,
+      o: ["6,720", "6,976", "7,045", "28,180"], a: 2,
+      why: "Recurrent part: 64 × (40 + 64 + 1) = 64 × 105 = 6,720. Output part: 5 × (64 + 1) = 325. Total = 7,045." },
+    { calc: true, q: `How many weights does a single LSTM layer have with D = 32 and H = 64 (one bias vector per block)?`,
+      o: ["6,208", "18,624", "24,576", "24,832"], a: 3,
+      why: "LSTM = 4H(D + H + 1) = 4 × 64 × (32 + 64 + 1) = 256 × 97 = 24,832. 24,576 forgets the biases; 18,624 is the GRU count (3 blocks)." },
+    { calc: true, q: `A scalar RNN has ${M("h<sub>t</sub> = tanh(w·x<sub>t</sub> + u·h<sub>t−1</sub>)")} with w = 0.6, u = 0.5, b = 0, h<sub>0</sub> = 0. The inputs are x<sub>1</sub> = 1.0 and x<sub>2</sub> = −0.5. What is h<sub>2</sub>?`,
+      o: ["0.537", "−0.300", "−0.031", "0.031"], a: 2,
+      why: "a<sub>1</sub> = 0.6(1.0) = 0.600 → h<sub>1</sub> = tanh(0.600) = 0.537. a<sub>2</sub> = 0.6(−0.5) + 0.5(0.537) = −0.300 + 0.269 = −0.031 → h<sub>2</sub> = tanh(−0.031) ≈ −0.031." },
+    { calc: true, q: `A gradient vector is g = (3, 4) and the clipping threshold is τ = 2. After gradient-norm clipping (${M("if ‖g‖ > τ: g ← g·τ/‖g‖")}), what is g?`,
+      o: ["(1.2, 1.6)", "(3, 4), unchanged", "(2, 2)", "(0.6, 0.8)"], a: 0,
+      why: "‖g‖ = √(9 + 16) = 5 > 2, so scale by 2/5 = 0.4: (3 × 0.4, 4 × 0.4) = (1.2, 1.6). The direction stays the same; only the length becomes τ = 2." },
+    { calc: true, q: `One LSTM step has f<sub>t</sub> = 0.9, c<sub>t−1</sub> = 2.0, i<sub>t</sub> = 0.5, g<sub>t</sub> = 0.4, o<sub>t</sub> = 0.8. What is h<sub>t</sub>?`,
+      o: ["0.757", "0.771", "0.964", "1.600"], a: 1,
+      why: "c<sub>t</sub> = 0.9(2.0) + 0.5(0.4) = 1.8 + 0.2 = 2.0. h<sub>t</sub> = o<sub>t</sub>·tanh(c<sub>t</sub>) = 0.8 × tanh(2.0) = 0.8 × 0.964 = 0.771. (0.757 forgets the input term.)" },
+    { calc: true, q: "You replace ResNet-50’s 2048 × 1000 fc layer with a new head for C = 10 target classes. How many parameters does the new head have?",
+      o: ["2,049,000", "20,480", "20,490", "10,245"], a: 2,
+      why: "2048 × 10 weights + 10 biases = 20,490. 2,049,000 is the original ImageNet head; 10,245 is the slide’s C = 5 example." },
+    { calc: true, q: `A language model has a mean cross-entropy of 2.0 nats per token on held-out text. Using ${M("Perplexity = exp(mean cross-entropy)")}, what is its perplexity?`,
+      o: ["2.00", "4.00", "7.39", "100"], a: 2,
+      why: "exp(2.0) = 7.389 ≈ 7.39. Roughly, the model is as uncertain as choosing among about 7 equally likely tokens." },
+    { calc: true, q: "If each backward step through a vanilla RNN multiplies the gradient by a factor of 0.8, about how much of the gradient remains after 10 steps?",
+      o: ["About 80%", "About 20%", "About 11%", "About 2%"], a: 2,
+      why: "0.8<sup>10</sup> = 0.107, so about 11% remains. This is the vanishing gradient (compare the slide: 0.9<sup>20</sup> leaves 12%)." }
+  ]
+},
+/* ======================= SET 2 ======================= */
+{ id: 2, name: "Set 2",
+  tf: [
+    ["A feed-forward network needs a fixed-size input and has no memory between inputs.", true,
+     "That is why sequences need a model like an RNN that carries a state from step to step. A CNN sees only a local window."],
+    ["In BPTT, the gradient of each shared weight is the sum of its contributions from all T unrolled copies.", true,
+     "Because the weights are tied, e.g. dL/dW<sub>hh</sub> = Σ<sub>t</sub> δ<sub>t</sub> h<sub>t−1</sub><sup>T</sup>."],
+    ["The memory needed for full BPTT on one sequence grows linearly with the sequence length T.", true,
+     "a<sub>t</sub> and h<sub>t</sub> must be stored for every step: O(T·H). This motivates truncated BPTT."],
+    ["A GRU keeps a separate cell state c<sub>t</sub> in addition to the hidden state h<sub>t</sub>.", false,
+     "The GRU merges the cell and hidden state into one state h<sub>t</sub>. The LSTM is the one with both c<sub>t</sub> and h<sub>t</sub>."],
+    ["The GRU has an output gate that controls how much of its state is exposed.", false,
+     "The GRU has only two gates (update z<sub>t</sub>, reset r<sub>t</sub>); its state is fully exposed."],
+    ["SRU is fast mainly because it performs far fewer total operations than an LSTM.", false,
+     "The bottleneck is the dependency chain. SRU moves the matrix multiplies out of the sequential loop so they run in one batched product; only cheap elementwise updates stay sequential."],
+    ["Greff et al. (2017) found that no gating variant was clearly better than the standard LSTM.", true,
+     "“LSTM: A search space odyssey.” LSTM and GRU accuracy differences are usually small, so benchmark on your own data."],
+    ["In VGG-16, about 89% of the parameters are in the fully connected classification head.", true,
+     "The three FC layers hold 123.6 M of 138.4 M parameters. In ResNet-50 the head is only about 8%."],
+    ["In Keras, after changing layer.trainable flags you must recompile the model for the change to take effect.", true,
+     "The slides show model.compile(...) again after unfreezing the last layers."],
+    ["He, Girshick, and Dollár (2019) showed that ImageNet pretraining is always required to reach good COCO detection results.", false,
+     "They found training from random initialization matched pretrained results given enough iterations and suitable normalization; pretraining mainly sped up early convergence."]
+  ],
+  match: [
+    { title: "A. Timeline of RNN cells",
+      intro: "Match each year to the milestone. One choice is not used.",
+      bank: [
+        "GRU (Cho et al.)",
+        "Elman RNN",
+        "Large LSTM study: no variant clearly beats LSTM (Greff et al.)",
+        "SRU (Lei et al.)",
+        "LSTM (Hochreiter and Schmidhuber)",
+        "Forget gate added to the LSTM (Gers et al.)"
+      ],
+      items: [["1990", "B"], ["1997", "E"], ["2000", "F"], ["2014", "A"], ["2018", "D"]],
+      why: "1990 Elman → 1997 LSTM → 2000 forget gate → 2014 GRU → 2017 Greff study (unused) → 2018 SRU." },
+    { title: "B. Analogies from the lecture",
+      intro: "Match each analogy to the concept it explains. One choice is not used.",
+      bank: [
+        "Gradient clipping",
+        "Exploding gradient",
+        "Dropout",
+        "Gated cells (LSTM, GRU)",
+        "Vanishing gradient",
+        "Truncated BPTT"
+      ],
+      items: [
+        ["The telephone game: the message gets fainter with every person", "E"],
+        ["Chismis in the barangay: it grows bigger with every retelling", "B"],
+        ["A pressure-cooker valve", "A"],
+        ["Studying a thick book chapter by chapter", "F"],
+        ["A notebook with a gatekeeper and an express lane", "D"]
+      ],
+      why: "Dropout (C) is the “random absentee in a group project,” which is not listed here." }
+  ],
+  mc: [
+    { q: `In the BPTT recursion ${M("δ<sub>t</sub> = (1 − h<sub>t</sub>²) ⊙ (W<sub>hy</sub><sup>T</sup> g<sub>t</sub> + W<sub>hh</sub><sup>T</sup> δ<sub>t+1</sub>)")}, what does the term W<sub>hh</sub><sup>T</sup> δ<sub>t+1</sub> represent?`,
+      o: ["The direct loss at step t", "The gradient flowing back from step t+1, because h<sub>t</sub> also affects h<sub>t+1</sub>", "The derivative of tanh", "The softmax output error"], a: 1,
+      why: "h<sub>t</sub> affects the loss directly via o<sub>t</sub> (the W<sub>hy</sub><sup>T</sup> g<sub>t</sub> term) and indirectly through h<sub>t+1</sub>. W<sub>hh</sub><sup>T</sup> δ<sub>t+1</sub> carries the future back. δ<sub>T+1</sub> = 0." },
+    { q: "A decoder trained on ground-truth previous tokens behaves differently at test time, when it must use its own predictions. What is this problem called, and what is a mitigation?",
+      o: ["Negative transfer; domain adaptation", "Exposure bias; scheduled sampling", "Leakage; chronological split", "Co-adaptation; fine-tuning"], a: 1,
+      why: "Teacher forcing causes exposure bias. Scheduled sampling gradually feeds the model its own predictions during training." },
+    { q: "In PyTorch truncated BPTT, which line belongs at the start of each chunk?",
+      o: ["h = torch.zeros_like(h)", "h.requires_grad = True", "h = h.detach()", "h = h.clone()"], a: 2,
+      why: "detach() keeps the value (context) but cuts the gradient at the chunk border. Zeroing would throw away the context. Keras uses stateful=True instead." },
+    { q: "Which normalization do torchvision ImageNet models expect, after scaling RGB to [0, 1]?",
+      o: ["Subtract 0.5, divide by 0.5 on every channel", "Mean (0.485, 0.456, 0.406), std (0.229, 0.224, 0.225)", "BGR with channel means subtracted and no std division", "No normalization; the model rescales inside"], a: 1,
+      why: "BGR with means subtracted is Keras ResNet50’s preprocess_input; in-model rescaling is EfficientNet in Keras." },
+    { q: "You want to feed grayscale chest X-rays to an ImageNet-pretrained CNN. What do the slides suggest?",
+      o: ["Retrain conv1 from scratch with one input channel", "Replicate the image to three channels, or sum the first-layer filters over RGB", "Convert to BGR", "Use 299 × 299 inputs"], a: 1,
+      why: "Pretrained weights expect three channels. Replicating the channel, or summing first-layer filters to one channel, keeps the pretrained filters usable." },
+    { q: "What is the rule of thumb for the backbone learning rate during fine-tuning, compared with the new head?",
+      o: ["The same as the head", "2× larger than the head", "10× to 100× smaller than the head", "1,000× larger than the head"], a: 2,
+      why: "Pretrained layers need gentle updates, e.g. layer4 at 1e-4 and the new head at 1e-3." },
+    { q: "Pretrained weights give no gain, or even worse results than training from scratch. This is called:",
+      o: ["Catastrophic forgetting", "Negative transfer", "Exposure bias", "Overfitting"], a: 1,
+      why: "Negative transfer happens when the source is unrelated or tuning is careless. Remedies include using earlier-layer features, intermediate or in-domain pretraining, and domain adaptation." },
+    { calc: true, q: "How many weights does a GRU layer have with D = 64 and H = 128 (one bias vector per block)?",
+      o: ["24,704", "73,728", "74,112", "98,816"], a: 2,
+      why: "GRU = 3H(D + H + 1) = 3 × 128 × (64 + 128 + 1) = 384 × 193 = 74,112. 73,728 drops the bias; 98,816 is the LSTM (4 blocks)." },
+    { calc: true, q: `How many parameters does an SRU layer have with D = H = 64? Use ${M("3HD + 4H")}.`,
+      o: ["12,288", "12,544", "16,640", "33,024"], a: 1,
+      why: "3 × 64 × 64 = 12,288, plus 4 × 64 = 256 (the v<sub>f</sub>, v<sub>r</sub> vectors and two biases) → 12,544. An LSTM at the same size would have 4 × 64 × 129 = 33,024." },
+    { calc: true, q: "One GRU step has z<sub>t</sub> = 0.25, h<sub>t−1</sub> = 0.8, and candidate h̃<sub>t</sub> = −0.4. What is h<sub>t</sub>?",
+      o: ["0.50", "−0.10", "0.40", "0.20"], a: 0,
+      why: "h<sub>t</sub> = (1 − z<sub>t</sub>)h<sub>t−1</sub> + z<sub>t</sub>h̃<sub>t</sub> = 0.75(0.8) + 0.25(−0.4) = 0.60 − 0.10 = 0.50. −0.10 comes from swapping z and 1 − z." },
+    { calc: true, q: `A 2-step scalar RNN (h<sub>0</sub> = 0, u = 0.5) produced h<sub>1</sub> = 0.462 and h<sub>2</sub> = 0.624. The loss is ${M("L = ½(h<sub>2</sub> − y)²")} with y = 1. Using BPTT, what is dL/du?`,
+      o: ["−0.230", "−0.106", "−0.090", "−0.376"], a: 1,
+      why: "δ<sub>2</sub> = (h<sub>2</sub> − y)(1 − h<sub>2</sub>²) = (−0.376)(0.611) = −0.230. Contribution to dL/du: δ<sub>2</sub>·h<sub>1</sub> = −0.230 × 0.462 = −0.106. δ<sub>1</sub>·h<sub>0</sub> = 0 because h<sub>0</sub> = 0. Sum = −0.106." },
+    { calc: true, q: "If each backward step multiplies the gradient by 1.1, about how large is the gradient after 30 steps?",
+      o: ["About 3×", "About 4.3×", "About 17×", "About 33×"], a: 2,
+      why: "1.1<sup>30</sup> = 17.4, the lecture’s “about 17× bigger after 30 steps.” This is the exploding gradient." },
+    { calc: true, q: "A gradient is g = (6, 8) and the clipping threshold is τ = 5. What is the clipped gradient?",
+      o: ["(6, 8), unchanged", "(5, 5)", "(0.6, 0.8)", "(3, 4)"], a: 3,
+      why: "‖g‖ = √(36 + 64) = 10 > 5, so scale by 5/10 = 0.5 → (3, 4). The new norm is exactly τ = 5." },
+    { calc: true, q: "You adapt VGG-16 by replacing its last 4096 × 1000 FC layer with one for 3 classes. How many parameters does the new layer have?",
+      o: ["4,097,000", "12,288", "12,291", "6,147"], a: 2,
+      why: "4096 × 3 weights + 3 biases = 12,291. The original layer had 4096 × 1000 + 1000 = 4,097,000." },
+    { calc: true, q: "A sequence of T = 1,000 steps is trained with truncated BPTT using chunks of k = 50 steps. How many chunks are there, and by what factor does stored activation memory drop versus full BPTT?",
+      o: ["50 chunks; 50× less", "20 chunks; 20× less", "20 chunks; 50× less", "1,000 chunks; 1,000× less"], a: 1,
+      why: "1,000 / 50 = 20 chunks. Memory goes from O(T) to O(k): 1,000 / 50 = 20× less. Dependencies longer than 50 steps are seen by the forward pass but not credited by the gradient." }
+  ]
+},
+/* ======================= SET 3 ======================= */
+{ id: 3, name: "Set 3",
+  tf: [
+    ["In the worked scalar BPTT example, |δ<sub>1</sub>| is smaller than |δ<sub>3</sub>| because each step back multiplies by u(1 − h²) < 1.", true,
+     "δ<sub>1</sub> was about 0.35 of δ<sub>3</sub> after two steps: the vanishing gradient in miniature."],
+    ["If the largest singular value of each Jacobian factor diag(1 − h<sub>j</sub>²)W<sub>hh</sub> is above 1, the gradient can grow exponentially with distance.", true,
+     "Below 1 the product shrinks exponentially (vanishing); above 1 it can grow exponentially (exploding)."],
+    ["pack_padded_sequence lets a PyTorch RNN skip the padded steps in a batch.", true,
+     "Packing skips padding; you should also mask padded steps out of the loss so they contribute no gradient."],
+    ["Initializing the LSTM forget-gate bias to 0 makes the cell start out remembering.", false,
+     "Set the forget-gate bias to 1, so f<sub>t</sub> starts near 1 and the cell starts by remembering."],
+    ["SRU’s highway output term (1 − r<sub>t</sub>)⊙x<sub>t</sub> assumes D = H, or a projection of x<sub>t</sub>.", true,
+     "x<sub>t</sub> is added directly to the H-sized output, so the sizes must match."],
+    ["An LSTM has 3 weight blocks and a GRU has 4.", false,
+     "Reversed: LSTM has 4 blocks (f, i, g, o) → 4H(D + H + 1); GRU has 3 (z, r, candidate) → 3H(D + H + 1)."],
+    ["In feature extraction, the pretrained backbone is frozen and only the new head is trained.", true,
+     "Fast, needs few labels, and causes no forgetting, but the features cannot adapt to a large domain gap."],
+    ["For multi-label classification, the new head should use softmax with categorical cross-entropy.", false,
+     "Use sigmoid with binary cross-entropy for multi-label. Softmax with cross-entropy is for single-label classes."],
+    ["For time-series forecasting, compute the normalization mean and std on the full series before splitting.", false,
+     "Compute scaling statistics on the training data only, otherwise information from the future leaks in."],
+    ["Kornblith, Shlens, and Le (2019) found that higher ImageNet accuracy generally predicted better transfer.", true,
+     "Across 16 networks and 12 datasets, though pretraining gave little benefit on some fine-grained datasets."]
+  ],
+  match: [
+    { title: "A. Equations",
+      intro: "Match each equation to what it computes. One choice is not used.",
+      bank: [
+        "SRU state update",
+        "Gradient-norm clipping",
+        "Vanilla (Elman) RNN state",
+        "Attention context vector",
+        "GRU state update",
+        "LSTM cell-state update"
+      ],
+      items: [
+        [`<span class="math">h<sub>t</sub> = tanh(W<sub>xh</sub>x<sub>t</sub> + W<sub>hh</sub>h<sub>t−1</sub> + b<sub>h</sub>)</span>`, "C"],
+        [`<span class="math">c<sub>t</sub> = f<sub>t</sub>⊙c<sub>t−1</sub> + i<sub>t</sub>⊙g<sub>t</sub></span>`, "F"],
+        [`<span class="math">h<sub>t</sub> = (1 − z<sub>t</sub>)⊙h<sub>t−1</sub> + z<sub>t</sub>⊙h̃<sub>t</sub></span>`, "E"],
+        [`<span class="math">c<sub>t</sub> = f<sub>t</sub>⊙c<sub>t−1</sub> + (1 − f<sub>t</sub>)⊙x̃<sub>t</sub></span>`, "A"],
+        [`<span class="math">g ← g·τ / ‖g‖</span>`, "B"]
+      ],
+      why: "SRU ties its input amount to (1 − f<sub>t</sub>), while the LSTM has a separate input gate i<sub>t</sub>. Attention (D) is a weighted sum of encoder states and is not listed." },
+    { title: "B. Transfer-learning terms",
+      intro: "Match each term to its description. One choice is not used.",
+      bank: [
+        "Unfreeze one block per stage, with a lower learning rate for each newly released block",
+        "Pretrained weights give no gain, or worse results than training from scratch",
+        "Align source and target feature distributions when labels are limited",
+        "Keep the pretrained backbone frozen and train only a new head",
+        "A linear classifier trained on frozen features, used as a baseline",
+        "Continue training some or all pretrained layers at a small learning rate"
+      ],
+      items: [
+        ["Feature extraction", "D"],
+        ["Fine-tuning", "F"],
+        ["Negative transfer", "B"],
+        ["Linear probe", "E"],
+        ["Gradual unfreezing", "A"]
+      ],
+      why: "C describes domain adaptation, which is not listed." }
+  ],
+  mc: [
+    { q: "Image captioning (one image in, a word sequence out) is usually built as:",
+      o: ["Many-to-one: an LSTM encoder with a softmax head", "One-to-many: a CNN encoder with an LSTM decoder", "Many-to-many aligned: a bidirectional LSTM tagger", "A vanilla RNN trained with CTC"], a: 1,
+      why: "Show and Tell (Vinyals et al., 2015): a CNN encodes the image, an LSTM decodes the caption. CTC with deep BiLSTMs is speech recognition." },
+    { q: "What is the main limitation of a basic encoder-decoder that passes a single context vector c?",
+      o: ["It cannot be trained with BPTT", "A fixed-size c must hold the whole input, so quality degrades for long inputs", "It requires inputs and outputs to have the same length", "It has no recurrent weights"], a: 1,
+      why: "That bottleneck motivated attention (Bahdanau et al., 2015): each decoder step takes a weighted sum of all encoder states." },
+    { q: "Which pairing of task and evaluation metric is correct?",
+      o: ["Speech recognition: word error rate (WER)", "Machine translation: perplexity", "Forecasting: BLEU", "Language modeling: MAPE"], a: 0,
+      why: "Language modeling → perplexity; translation → BLEU; speech → WER/CER; forecasting → MAE, RMSE, MAPE against a persistence baseline." },
+    { q: "You need a model for streaming inference on a small edge device. Which cell is the suggested starting point?",
+      o: ["Bidirectional LSTM", "SRU with a large hidden size", "GRU or a small LSTM", "A 4-layer stacked LSTM"], a: 2,
+      why: "Streaming and edge → GRU or small LSTM (constant memory per step). Bidirectional layers are offline only; SRU targets GPU training time on long sequences." },
+    { q: "Which statement matches Yosinski et al. (2014), “How transferable are features?”",
+      o: ["Layer-1 features transferred poorly between tasks", "Freezing middle layers can hurt because neighboring layers co-adapted; fine-tuning can repair this", "Transferring between dissimilar tasks was worse than random weights", "Fine-tuned transferred layers generalized worse than training from scratch"], a: 1,
+      why: "Layer-1 features transferred almost losslessly, fine-tuning beat random initialization, and even distant tasks beat random weights (with a larger gap)." },
+    { q: "How does transfer usually work for object detection with torchvision models?",
+      o: ["Train the whole detector from random weights", "ImageNet backbone → COCO-pretrained detector → replace the box predictor for your classes and fine-tune", "Freeze the box predictor and retrain only the backbone", "Use a segmentation decoder as the detector head"], a: 1,
+      why: "Two levels of transfer. The backbone (and sometimes the FPN) transfers; the task-specific box and mask heads are retrained." },
+    { q: "In Keras, how do you keep a pretrained base’s BatchNorm layers in inference mode inside a new model?",
+      o: ["x = base(x, training=False)", "base.trainable = True", "model.eval()", "layer.momentum = 0"], a: 0,
+      why: "Calling base(x, training=False) keeps BN in inference mode even after unfreezing. In PyTorch you call .eval() on the BN modules." },
+    { calc: true, q: "How many weights does an LSTM layer have with D = H = 256 (one bias vector per block)?",
+      o: ["131,328", "393,984", "524,288", "525,312"], a: 3,
+      why: "H(D + H + 1) = 256 × 513 = 131,328 per block. LSTM has 4 blocks → 525,312. 393,984 is the GRU (3 blocks); 524,288 drops the biases." },
+    { calc: true, q: "Instead of an RNN, you flatten T = 60 steps of D = 20 features into a dense layer of H = 64 units. How many weights does that dense layer need (ignore biases)?",
+      o: ["1,280", "5,376", "76,800", "81,920"], a: 2,
+      why: "Input size = 60 × 20 = 1,200, so 64 × 1,200 = 76,800, and it fixes T at 60. An RNN with the same H needs only W<sub>xh</sub> + W<sub>hh</sub> = 64·20 + 64·64 = 5,376, for any T." },
+    { calc: true, q: `One SRU step (g = tanh) has f<sub>t</sub> = 0.6, c<sub>t−1</sub> = 1.0, x̃<sub>t</sub> = 0.5, r<sub>t</sub> = 0.7, x<sub>t</sub> = 0.2. Using ${M("c<sub>t</sub> = f<sub>t</sub>c<sub>t−1</sub> + (1 − f<sub>t</sub>)x̃<sub>t</sub>")} and ${M("h<sub>t</sub> = r<sub>t</sub>g(c<sub>t</sub>) + (1 − r<sub>t</sub>)x<sub>t</sub>")}, what is h<sub>t</sub>?`,
+      o: ["0.465", "0.525", "0.800", "0.664"], a: 1,
+      why: "c<sub>t</sub> = 0.6(1.0) + 0.4(0.5) = 0.8. h<sub>t</sub> = 0.7 × tanh(0.8) + 0.3 × 0.2 = 0.7 × 0.664 + 0.06 = 0.465 + 0.06 = 0.525. (0.465 forgets the highway term.)" },
+    { calc: true, q: "A scalar RNN uses w = 0.5, u = 0.8, b = 0, h<sub>0</sub> = 0, tanh activation. The inputs are x = (0.5, 1.0, 0.0). What is h<sub>3</sub>?",
+      o: ["0.245", "0.602", "0.447", "0.481"], a: 2,
+      why: "a<sub>1</sub> = 0.25 → h<sub>1</sub> = 0.245. a<sub>2</sub> = 0.5 + 0.8(0.245) = 0.696 → h<sub>2</sub> = 0.602. a<sub>3</sub> = 0 + 0.8(0.602) = 0.481 → h<sub>3</sub> = tanh(0.481) = 0.447. Even with x<sub>3</sub> = 0, the state remembers earlier inputs." },
+    { calc: true, q: "BPTT gives dL/du = 0.25 for a recurrent weight u = 0.6. After one SGD step with η = 0.2, what is u?",
+      o: ["0.65", "0.55", "0.35", "0.58"], a: 1,
+      why: "u ← u − η·dL/du = 0.6 − 0.2 × 0.25 = 0.6 − 0.05 = 0.55." },
+    { calc: true, q: "A language model reports a perplexity of 20 on held-out text. What is its mean cross-entropy per token, in nats?",
+      o: ["1.30", "3.00", "20.0", "0.05"], a: 1,
+      why: "Perplexity = exp(CE), so CE = ln(20) = 2.996 ≈ 3.00 nats. 1.30 is log<sub>10</sub>(20), the wrong base." },
+    { calc: true, q: "You fine-tune ResNet-50 for multi-label chest X-ray findings with C = 14 labels. How many parameters does the new head have, and which output layer fits?",
+      o: ["28,686, softmax with cross-entropy", "28,686, sigmoid with binary cross-entropy", "28,672, sigmoid with binary cross-entropy", "2,049,000, sigmoid with binary cross-entropy"], a: 1,
+      why: "2048 × 14 + 14 = 28,686. Multi-label means each finding is independent, so use sigmoid with binary cross-entropy. 28,672 forgets the biases." },
+    { calc: true, q: "Along an LSTM’s direct cell-state path, the gradient is multiplied by f<sub>t</sub> each step. If f<sub>t</sub> stays at 0.98 for 50 steps, about what fraction of the gradient survives?",
+      o: ["About 2%", "About 36%", "About 49%", "About 98%"], a: 1,
+      why: "0.98<sup>50</sup> = 0.364 ≈ 36%. Compare a vanilla factor of 0.9: 0.9<sup>50</sup> ≈ 0.005. A forget gate near 1 keeps error flowing (but it is not a guarantee)." }
+  ]
+},
+/* ======================= LECTURE: RNNs & BPTT ======================= */
+{ id: 4, key: "rnn", group: "lecture", seed: 46, name: "RNNs & BPTT", full: "Recurrent Neural Networks: Architecture, BPTT, Applications",
+  tf: [
+    ["A feed-forward network or CNN sees a fixed input or a local window, while an RNN carries a state from step to step.", true,
+     "That is the slide’s case for recurrence: sequences have variable length, order sensitivity and long-range dependence."],
+    ["“Dog bites man” and “man bites dog” show that a sequence model must be sensitive to order.", true,
+     "The two sentences share tokens but differ in meaning; permuting the steps changes the meaning."],
+    ["In the parameter table (D = 50, H = 128, C = 10), the recurrent matrix W<sub>hh</sub> has 6,400 entries.", false,
+     "W<sub>hh</sub> is H × H = 128 × 128 = 16,384. The 6,400 belongs to W<sub>xh</sub> (H × D = 128 × 50)."],
+    ["Compute per sequence grows as T × H(D + H), and W<sub>hh</sub> dominates when H is large.", true,
+     "The H × H recurrent product is the expensive part when H is large."],
+    ["When sequences are padded to equal length, the padded steps should be masked out of the loss.", true,
+     "Masked steps contribute no gradient. Packing (pack_padded_sequence) also skips them in the RNN."],
+    ["A vanilla RNN with ReLU works well with any random initialization of W<sub>hh</sub>.", false,
+     "ReLU needs careful recurrent initialization, such as identity or orthogonal W<sub>hh</sub> (Le et al., 2015), to stay stable."],
+    ["During BPTT, the backward step for time t can run in parallel with the step for t − 1 on a GPU.", false,
+     "Step t cannot start until its neighbour is done, in either direction. This sequential dependency limits GPU parallelism."],
+    ["For softmax with cross-entropy and a one-hot target, g<sub>t</sub> = softmax(o<sub>t</sub>) − y<sub>t</sub>.", true,
+     "Same form as in a feed-forward classifier."],
+    ["Transformers keep attention and drop the recurrence, which allows parallel training over positions.", true,
+     "Vaswani et al. (2017). Attention also shortens gradient paths between distant positions."],
+    ["For forecasting, a random shuffle of samples before splitting is fine as long as the test set is large.", false,
+     "Use chronological or walk-forward validation, never random shuffling, or the model sees the future."]
+  ],
+  match: [
+    { title: "A. Applications",
+      intro: "Match each application to its typical input-to-output setup. One choice is not used.",
+      bank: [
+        "ECG or EEG to labels, often a 1D-CNN plus LSTM or GRU",
+        "Sentence to sentence with an LSTM encoder-decoder, later with attention",
+        "DNA or protein sequences to structure or regulatory labels",
+        "Audio frames to text with deep bidirectional LSTMs trained with CTC",
+        "Tokens to next token, trained and reported with perplexity",
+        "Image to word sequence with a CNN encoder and an LSTM decoder"
+      ],
+      items: [["Speech recognition", "D"], ["Image captioning", "F"], ["Machine translation", "B"], ["Language modeling", "E"], ["Biosignals", "A"]],
+      why: "From the Applications of RNNs table. C is bioinformatics, which is not listed." },
+    { title: "B. Evaluation metrics",
+      intro: "Match each task to the metric the slides recommend. One choice is not used.",
+      bank: [
+        "Word error rate (WER) or character error rate",
+        "MAE, RMSE, or MAPE, compared with a persistence baseline",
+        "Perplexity = exp(mean cross-entropy)",
+        "Top-5 accuracy on ImageNet",
+        "BLEU, plus human evaluation where possible",
+        "Per-class recall, F1, and AUC with a subject-wise split"
+      ],
+      items: [["Language modeling", "C"], ["Translation", "E"], ["Speech recognition", "A"], ["Classification of sequences", "F"], ["Forecasting", "B"]],
+      why: "From the Evaluating Sequence Models table. D is an image-classification metric and is not used." }
+  ],
+  mc: [
+    { q: "The slide says the unrolled RNN is “the key to both its power and its training difficulty.” Why?",
+      o: ["It is a very deep feed-forward network whose layers all share one set of weights", "Each step has its own weights, so the model has too many parameters", "It uses ReLU, whose outputs are unbounded", "It can only process fixed-length inputs"], a: 0,
+      why: "Sharing weights across steps gives memory and length-independence; the depth of the unrolled graph is what makes gradients vanish or explode." },
+    { q: "In a stacked (deep) RNN, what are the inputs to layer 2?",
+      o: ["The raw inputs x<sub>t</sub> again", "The hidden states of layer 1 at each step", "Only the final state h<sub>T</sub> of layer 1", "The outputs of a backward RNN"], a: 1,
+      why: "Layer 1 states are the inputs of layer 2. Two to three layers are typical; deeper stacks need dropout and residual connections." },
+    { q: "Why does the memory for full BPTT grow linearly with sequence length T?",
+      o: ["The weights are copied T times in memory", "a<sub>t</sub> and h<sub>t</sub> must be stored for every step for the backward pass", "Gradient clipping keeps a history of all gradients", "Softmax must be stored for the whole vocabulary at each step"], a: 1,
+      why: "Memory is O(T·H) per sequence. Weights are shared, so they are not copied. This motivates truncated BPTT." },
+    { q: "According to Bengio et al. (1994) and Pascanu et al. (2013), the gradient across k steps, ∂h<sub>t</sub>/∂h<sub>k</sub>, is:",
+      o: ["A sum of k Jacobians", "A product of k Jacobians diag(1 − h<sub>j</sub>²)W<sub>hh</sub>", "The single matrix W<sub>hh</sub>", "Always 1 because tanh is bounded"], a: 1,
+      why: "If each factor’s largest singular value is below 1 the product shrinks exponentially; above 1 it can grow exponentially." },
+    { q: "Which optimizer setup does the practical training checklist recommend for RNNs?",
+      o: ["SGD at learning rate 1.0 with no clipping", "Adam or RMSprop at about 1e-3, with gradient clipping at 1 to 5", "Adam at 1e-1 with clipping at 100", "RMSprop with no clipping and a fixed rate"], a: 1,
+      why: "Also reduce the learning rate on plateau." },
+    { q: "How should a dataset of recorded sequences be shuffled and split?",
+      o: ["Shuffle individual steps across all sequences", "Shuffle whole sequences, not steps inside a sequence; split time series chronologically", "Never shuffle anything", "Split by step index so every sequence appears in both train and test"], a: 1,
+      why: "Shuffling steps destroys order, and mixing one record across train and test inflates accuracy." },
+    { q: "In the PyTorch SeqClassifier, the forward pass returns self.fc(h_n[-1]). What is h_n[-1]?",
+      o: ["The first layer’s state at the first step", "The final hidden state of the top LSTM layer", "The cell state of the bottom layer", "The average of all hidden states"], a: 1,
+      why: "h_n holds the final state of each layer; index −1 is the top (last) layer. With packing, it is the last valid step of each sequence." },
+    { calc: true, q: `A vanilla RNN classifier has D = 30, H = 100, C = 4. Using ${M("H(D + H + 1) + C(H + 1)")}, how many parameters does it have?`,
+      o: ["13,100", "13,500", "13,504", "54,016"], a: 2,
+      why: "100 × (30 + 100 + 1) = 13,100, plus 4 × (100 + 1) = 404 → 13,504. 13,500 forgets the output bias b<sub>y</sub>." },
+    { calc: true, q: "You flatten T = 200 steps of D = 16 features into a dense layer of H = 32 units. How many weights does it need (ignore biases)?",
+      o: ["1,536", "3,200", "6,400", "102,400"], a: 3,
+      why: "32 × (200 × 16) = 32 × 3,200 = 102,400, and T is fixed at 200. An RNN with H = 32 needs only W<sub>xh</sub> + W<sub>hh</sub> = 512 + 1,024 = 1,536 for any T." },
+    { calc: true, q: `A scalar RNN has w = 0.4, u = 0.9, b = 0, h<sub>0</sub> = 0, and ${M("h<sub>t</sub> = tanh(w·x<sub>t</sub> + u·h<sub>t−1</sub>)")}. The inputs are x<sub>1</sub> = x<sub>2</sub> = 1.0. What is h<sub>2</sub>?`,
+      o: ["0.380", "0.630", "0.641", "0.742"], a: 1,
+      why: "a<sub>1</sub> = 0.4 → h<sub>1</sub> = tanh(0.4) = 0.380. a<sub>2</sub> = 0.4 + 0.9(0.380) = 0.742 → h<sub>2</sub> = tanh(0.742) = 0.630. (0.641 skips the tanh on h<sub>1</sub>; 0.742 is a<sub>2</sub>.)" },
+    { calc: true, q: `For the same network, h<sub>2</sub> = 0.630 and the target is y = 1. What is ${M("L = ½(h<sub>2</sub> − y)²")}?`,
+      o: ["0.068", "0.137", "0.185", "0.370"], a: 0,
+      why: "½(0.630 − 1)² = ½(−0.370)² = ½(0.137) = 0.068. 0.137 forgets the ½." },
+    { calc: true, q: "Continue with h<sub>1</sub> = 0.380, h<sub>2</sub> = 0.630, u = 0.9, x<sub>1</sub> = x<sub>2</sub> = 1.0, y = 1. Using BPTT, what is dL/dw?",
+      o: ["−0.223", "−0.395", "−0.085", "−0.172"], a: 1,
+      why: "δ<sub>2</sub> = (h<sub>2</sub> − y)(1 − h<sub>2</sub>²) = (−0.370)(0.603) = −0.223. δ<sub>1</sub> = δ<sub>2</sub>·u·(1 − h<sub>1</sub>²) = −0.223 × 0.9 × 0.856 = −0.172. dL/dw = δ<sub>2</sub>x<sub>2</sub> + δ<sub>1</sub>x<sub>1</sub> = −0.223 − 0.172 = −0.395." },
+    { calc: true, q: "With dL/dw = −0.395, w = 0.4, and learning rate η = 0.1, what is w after one SGD step?",
+      o: ["0.360", "0.440", "0.795", "0.005"], a: 1,
+      why: "w ← w − η·dL/dw = 0.4 − 0.1(−0.395) = 0.4 + 0.0395 = 0.440. A negative gradient increases the weight." },
+    { calc: true, q: "If each backward step multiplies the gradient by 1.2, how large is it after 10 steps?",
+      o: ["About 2×", "About 3×", "About 6.2×", "About 12×"], a: 2,
+      why: "1.2<sup>10</sup> = 6.19. Growth is exponential, not linear (3× would be 1 + 10 × 0.2)." },
+    { calc: true, q: "A language model’s per-token cross-entropies on a 4-token test string are 0.5, 1.5, 1.0, and 2.0 nats. What is its perplexity?",
+      o: ["1.25", "3.49", "7.39", "148.4"], a: 1,
+      why: "Mean CE = 5.0 / 4 = 1.25. Perplexity = exp(1.25) = 3.49. 148.4 is exp of the sum, not the mean." }
+  ]
+},
+/* ======================= LECTURE: Training Challenges ======================= */
+{ id: 5, key: "challenges", group: "lecture", seed: 95, name: "Training Challenges", full: "Challenges and Solutions in Training RNNs",
+  tf: [
+    ["Most RNN training difficulties come from the feedback’s long trip backward through every step, or from how the data is prepared and tested.", true,
+     "That is the lecture’s summary; every remedy targets one of three families: the signal, speed and memory, or data and testing."],
+    ["Vanishing and exploding gradients come from two unrelated mechanisms.", false,
+     "Both come from the same repeated multiplication: it shrinks the signal when the per-step factor is below one and inflates it when above one."],
+    ["A model with vanishing gradients uses recent information well and ignores the distant past.", true,
+     "Early steps barely learn because the correction fades on the way back."],
+    ["Gradient clipping changes the gradient’s direction so it points toward the minimum.", false,
+     "The direction stays the same; only the size is trimmed to the limit."],
+    ["In truncated training, memory is carried forward between chunks, but feedback stays inside each chunk.", true,
+     "The forward pass keeps context; the gradient does not cross chunk borders."],
+    ["You should choose a chunk length a little shorter than the longest dependency that matters.", false,
+     "Choose a chunk a little longer than the longest link that matters, or that link is never credited by the gradient."],
+    ["Training an RNN cannot be shared across thousands of cores the way other models can, because step t needs step t − 1.", true,
+     "The relay-race problem: the next runner cannot start until the baton arrives."],
+    ["A sensible learning-rate plan starts small, eases upward, then slows down near the end.", true,
+     "Warm-up then decay. Too fast overshoots; too slow takes forever."],
+    ["If a fancy model cannot beat the persistence guess “bukas parang ngayon,” you should investigate.", true,
+     "Always beat a simple baseline first."],
+    ["Reporting a single training run is enough, because training results are fully repeatable.", false,
+     "Training has some luck. Run more than once; a repeatable result is a trustworthy result."]
+  ],
+  match: [
+    { title: "A. Challenges and their analogies",
+      intro: "Match each challenge to the lecture’s analogy. One choice is not used.",
+      bank: [
+        "A relay race: the next runner cannot start until the baton arrives",
+        "Chismis in the barangay: it grows with every retelling",
+        "A pressure-cooker valve",
+        "Memorizing last year’s exam: excellent practice score, poor real test",
+        "The telephone game: the message gets fainter with every person",
+        "The Cebu clue, far from the question “speaks fluent …?”"
+      ],
+      items: [["Vanishing gradient", "E"], ["Exploding gradient", "B"], ["Long-range dependency", "F"], ["Sequential computation", "A"], ["Overfitting", "D"]],
+      why: "C, the pressure-cooker valve, is a remedy (gradient clipping), not a challenge." },
+    { title: "B. Remedies and their analogies",
+      intro: "Match each remedy to its analogy. One choice is not used.",
+      bank: [
+        "Keeping exam questions out of the reviewer",
+        "A runner starting from a good position",
+        "The telephone game",
+        "A notebook with a gatekeeper and an express lane",
+        "Studying a thick book chapter by chapter",
+        "Good study habits: a random absentee, knowing when to stop, a lab notebook"
+      ],
+      items: [["Truncated BPTT", "E"], ["Good starting point (initialization, normalization, LR schedule)", "B"], ["Gated cells and skip connections", "D"], ["Careful practice (masking, dropout, early stopping)", "F"], ["Honest testing", "A"]],
+      why: "C, the telephone game, describes the vanishing-gradient problem, not a remedy." }
+  ],
+  mc: [
+    { q: "The lecture sorts RNN training problems into three families. Which list is correct?",
+      o: ["The signal; speed and memory; data and testing", "Data size; model size; hardware", "Overfitting; underfitting; bias", "Activations; optimizers; losses"], a: 0,
+      why: "The signal fades or blows up; training is slow and memory is short; data and testing can fool us." },
+    { q: "What do you typically see when gradients explode?",
+      o: ["The model ignores the distant past", "The loss suddenly jumps, or numbers turn into errors (NaN)", "Training score is high but the test score is low", "Training is slow but perfectly stable"], a: 1,
+      why: "A huge correction makes the model take a giant step, wrecking earlier learning." },
+    { q: "Why must padded sequences also be masked?",
+      o: ["Masking makes sequences shorter on disk", "So the model ignores the blanks that were added to fill the batch", "Masking replaces gradient clipping", "Padding only works for GRUs"], a: 1,
+      why: "Sequences of different lengths share a batch only after padding; the model must be told to ignore the padding." },
+    { q: "Which is an example of leakage?",
+      o: ["Using dropout during training", "Randomly shuffling days so the model sees tomorrow while studying today", "Stopping when the validation score stops improving", "Comparing against a persistence baseline"], a: 1,
+      why: "The score looks wonderful, and it is fake. Split by time: train on the past, test on the future." },
+    { q: "Which remedy most directly addresses fading signals and short memory?",
+      o: ["Gradient clipping", "Gated cells (LSTM, GRU) and skip connections", "Dropout", "A bigger batch size"], a: 1,
+      why: "The gatekeeper decides what to keep, erase and write, protecting an express lane for the signal. Clipping only handles explosion." },
+    { q: "In “Start well,” what is normalization compared to?",
+      o: ["A pressure-cooker valve", "A classroom that is neither too hot nor too cold, keeping values in a comfortable range", "A relay race", "A random absentee"], a: 1,
+      why: "Normalization keeps numbers in a comfortable range at every step." },
+    { q: "What does early stopping do?",
+      o: ["Stops training after a fixed 10 epochs", "Stops when the real (validation) score stops improving and keeps the best version", "Stops the gradient at chunk borders", "Stops the model from seeing padded steps"], a: 1,
+      why: "“When the real score stops improving, stop, keep the best version, and go home.”" },
+    { q: "Why does the lecture say to apply fixes one at a time and compare against a baseline?",
+      o: ["Because remedies cannot be combined", "So you know which fix actually helped", "Because each fix needs a new dataset", "To make training faster"], a: 1,
+      why: "Changing several things at once hides which one mattered." },
+    { calc: true, q: "If each step back keeps 95% of the signal, about how much is left after 40 steps?",
+      o: ["About 2%", "About 13%", "About 60%", "About 95%"], a: 1,
+      why: "0.95<sup>40</sup> = 0.129 ≈ 13%. (The lecture’s example: 0.9<sup>30</sup> ≈ 4%.)" },
+    { calc: true, q: "If each step back adds 5% to the signal, about how much bigger is it after 50 steps?",
+      o: ["About 2.5×", "About 3.5×", "About 11.5×", "About 50×"], a: 2,
+      why: "1.05<sup>50</sup> = 11.47 ≈ 11.5×. Linear thinking (1 + 50 × 0.05 = 3.5×) badly underestimates exponential growth." },
+    { calc: true, q: `A gradient is g = (5, 12) and the clipping limit is τ = 6.5. Using ${M("if ‖g‖ > τ: g ← g·τ/‖g‖")}, what is the clipped gradient?`,
+      o: ["(5, 12), unchanged", "(2.5, 6)", "(6.5, 6.5)", "(0.385, 0.923)"], a: 1,
+      why: "‖g‖ = √(25 + 144) = 13 > 6.5, so scale by 6.5/13 = 0.5 → (2.5, 6). (0.385, 0.923) would be clipping to length 1." },
+    { calc: true, q: "A gradient is g = (1, 2, 2) and the clipping limit is τ = 5. What does clipping return?",
+      o: ["(1, 2, 2), unchanged", "(1.67, 3.33, 3.33)", "(0.33, 0.67, 0.67)", "(5, 5, 5)"], a: 0,
+      why: "‖g‖ = √(1 + 4 + 4) = 3 ≤ 5. Below the limit, leave it alone. Clipping never scales a gradient up." },
+    { calc: true, q: "A sequence of 720 hourly readings is trained in chunks of 24 steps. How many chunks are there, and how far back can feedback travel?",
+      o: ["24 chunks; 30 steps", "30 chunks; 24 steps", "30 chunks; 720 steps", "720 chunks; 1 step"], a: 1,
+      why: "720 / 24 = 30 chunks. Feedback stays inside each chunk, so at most 24 steps; the state value is still carried forward." },
+    { calc: true, q: "If each step back keeps 90% of the signal, after how many steps does less than half remain?",
+      o: ["5 steps", "6 steps", "7 steps", "10 steps"], a: 2,
+      why: "0.9<sup>6</sup> = 0.531 (still above half); 0.9<sup>7</sup> = 0.478 (below half). So 7 steps." },
+    { calc: true, q: "Daily rainfall is 30, 32, 31, 35 mm. The persistence baseline (“bukas parang ngayon”) predicts each day with the previous day’s value. What is its MAE on days 2–4, and what does it say about an LSTM with MAE 2.8 mm?",
+      o: ["2.33 mm; the LSTM beats the baseline", "2.33 mm; the LSTM is worse than the baseline, so investigate", "7.00 mm; the LSTM beats the baseline", "1.00 mm; the LSTM is worse"], a: 1,
+      why: "Predictions 30, 32, 31 vs actual 32, 31, 35 → errors 2, 1, 4 → MAE = 7/3 = 2.33 mm. 2.8 > 2.33, so the LSTM loses to a simple guess." }
+  ]
+},
+/* ======================= LECTURE: LSTM, GRU, SRU ======================= */
+{ id: 6, key: "cells", group: "lecture", seed: 25, name: "LSTM · GRU · SRU", full: "RNN Cells: LSTM, GRU, and SRU",
+  tf: [
+    ["LSTM and GRU mainly target memory and trainability, while SRU keeps gating but targets speed.", true,
+     "The three design pressures are memory, trainability and speed."],
+    ["In the LSTM, h<sub>t</sub> = o<sub>t</sub> ⊙ tanh(c<sub>t</sub>).", true,
+     "The output gate decides how much of the cell is exposed as the hidden state."],
+    ["The GRU update gate z<sub>t</sub> acts like a combined forget and input gate.", true,
+     "h<sub>t</sub> = (1 − z<sub>t</sub>)⊙h<sub>t−1</sub> + z<sub>t</sub>⊙h̃<sub>t</sub> interpolates between keeping and writing."],
+    ["In the SRU output h<sub>t</sub> = r<sub>t</sub>⊙g(c<sub>t</sub>) + (1 − r<sub>t</sub>)⊙x<sub>t</sub>, g is typically sigmoid.", false,
+     "g is typically tanh."],
+    ["SRU’s forget and reset gates use a full matrix times h<sub>t−1</sub>.", false,
+     "SRU gates use W x<sub>t</sub> plus an elementwise term v⊙c<sub>t−1</sub>. There is no recurrent matrix, which is what makes it fast."],
+    ["Lei et al. report SRU is 5 to 9 times faster than cuDNN LSTM on every task and every GPU.", false,
+     "“Up to” 5 to 9 times on some tasks; the gain depends on task and hardware."],
+    ["At D = H = 128, the GRU has fewer weights than the LSTM but more than the SRU.", true,
+     "LSTM 131,584 > GRU 98,688 > SRU 49,664 > vanilla RNN 32,896."],
+    ["Bidirectional layers are fine for forecasting as long as the model is stacked.", false,
+     "Bidirectional layers read the future, so use them only for offline tasks, never for forecasting or streaming."],
+    ["For long sequences where GPU training time matters, SRU (or convolution or attention models) is a suggested starting point.", true,
+     "SRU batches its heavy matrix products over all T steps."],
+    ["The rule of thumb is to start with the most complex cell and simplify later.", false,
+     "Start with the simplest cell that meets your constraints, tune it well, and compare against a baseline."]
+  ],
+  match: [
+    { title: "A. Choosing a cell",
+      intro: "Match each situation to the suggested starting point. One choice is not used.",
+      bank: [
+        "SRU, or convolution or attention models",
+        "Vanilla RNN or 1D-CNN",
+        "A 10-layer stacked LSTM without dropout",
+        "GRU or a small LSTM; constant memory per step",
+        "Bidirectional layers that read past and future",
+        "LSTM with forget bias 1 and gradient clipping"
+      ],
+      items: [
+        ["Streaming inference on an edge device with a small model", "D"],
+        ["Long dependencies, and you want a strong default", "F"],
+        ["Long sequences where GPU training time matters", "A"],
+        ["Short context, and you need a quick baseline", "B"],
+        ["Offline tagging of a recorded sequence where future context helps", "E"]
+      ],
+      why: "C is never suggested: deeper stacks beyond 2–3 layers need dropout and residual connections." },
+    { title: "B. Terms",
+      intro: "Match each term to its description. One choice is not used.",
+      bank: [
+        "Computing W x<sub>t</sub>, W<sub>f</sub> x<sub>t</sub>, W<sub>r</sub> x<sub>t</sub> for all T steps in one batched multiply",
+        "Caps the gradient norm at a threshold τ",
+        "The skip term (1 − r<sub>t</sub>)⊙x<sub>t</sub> in the SRU output",
+        "Makes the cell start out remembering",
+        "With f<sub>t</sub> near 1, error travels along c<sub>t</sub> almost unchanged",
+        "tanh(W[r<sub>t</sub>⊙h<sub>t−1</sub>, x<sub>t</sub>] + b), formed using the reset gate"
+      ],
+      items: [["Constant error carousel", "E"], ["Highway output", "C"], ["Parallel precomputation", "A"], ["GRU candidate h̃<sub>t</sub>", "F"], ["Forget-gate bias initialized to 1", "D"]],
+      why: "B describes gradient clipping, which is not a cell feature." }
+  ],
+  mc: [
+    { q: "Which three design pressures drove the move from the Elman RNN to LSTM, GRU and SRU?",
+      o: ["Memory, trainability, speed", "Accuracy, privacy, cost", "Depth, width, resolution", "Bias, variance, noise"], a: 0,
+      why: "Keep information over long spans, let gradients flow back, and reduce the sequential bottleneck." },
+    { q: "Why does SRU’s output assume D = H, or a projection of x<sub>t</sub>?",
+      o: ["Because the forget gate needs square matrices", "Because the highway term adds x<sub>t</sub> directly to an H-sized output", "Because tanh only accepts square inputs", "Because c<sub>t</sub> must equal x<sub>t</sub>"], a: 1,
+      why: "(1 − r<sub>t</sub>)⊙x<sub>t</sub> is added elementwise to r<sub>t</sub>⊙g(c<sub>t</sub>), so the sizes must match." },
+    { q: "The LSTM slide shows “4×, 2, +1.” What do these stand for?",
+      o: ["4 layers, 2 directions, 1 output", "4× weight blocks vs a vanilla RNN; 2 states (c<sub>t</sub>, h<sub>t</sub>); forget-bias initialization of +1", "4 gates, 2 biases, 1 cell", "4× faster, 2× smaller, 1 state"], a: 1,
+      why: "LSTM has four blocks (f, i, g, o) → 4H(D + H + 1) parameters." },
+    { q: "What limits LSTM and GRU training speed on a GPU?",
+      o: ["The number of gates", "Each step’s matrix multiply must wait for h<sub>t−1</sub>, so T large products run one after another", "The sigmoid function is slow", "The cell state is too large"], a: 1,
+      why: "The dependency chain is the bottleneck, not the number of operations." },
+    { q: "According to Chung et al. (2014) and Greff et al. (2017), how do LSTM and GRU compare in accuracy?",
+      o: ["GRU is always much better", "LSTM is always much better", "They are usually comparable, so benchmark on your own data", "Neither beats a vanilla RNN"], a: 2,
+      why: "Differences are often small; decide by constraint and benchmark honestly." },
+    { q: "In a GRU, if z<sub>t</sub> ≈ 0, then:",
+      o: ["h<sub>t</sub> ≈ h<sub>t−1</sub>: the old state is kept", "h<sub>t</sub> ≈ h̃<sub>t</sub>: the state is overwritten", "h<sub>t</sub> ≈ 0", "h<sub>t</sub> ≈ x<sub>t</sub>"], a: 0,
+      why: "h<sub>t</sub> = (1 − 0)h<sub>t−1</sub> + 0·h̃<sub>t</sub> = h<sub>t−1</sub>." },
+    { q: "In a GRU, if r<sub>t</sub> ≈ 0, the candidate h̃<sub>t</sub>:",
+      o: ["Copies h<sub>t−1</sub> exactly", "Is formed almost only from x<sub>t</sub>, ignoring the previous state", "Becomes zero", "Is exposed through an output gate"], a: 1,
+      why: "h̃<sub>t</sub> = tanh(W[r<sub>t</sub>⊙h<sub>t−1</sub>, x<sub>t</sub>]); with r<sub>t</sub> ≈ 0 the previous state is masked out." },
+    { calc: true, q: `How many weights does an LSTM layer have with D = 100 and H = 50? Use ${M("4H(D + H + 1)")}.`,
+      o: ["7,550", "22,650", "30,000", "30,200"], a: 3,
+      why: "4 × 50 × (100 + 50 + 1) = 200 × 151 = 30,200. 30,000 forgets the biases; 22,650 is the GRU." },
+    { calc: true, q: "How many weights does a GRU layer have with D = 100 and H = 50?",
+      o: ["7,550", "22,500", "22,650", "30,200"], a: 2,
+      why: "3 × 50 × 151 = 22,650. 22,500 forgets the biases; 7,550 is one block (a vanilla RNN)." },
+    { calc: true, q: `How many parameters does an SRU layer have with D = H = 50? Use ${M("3HD + 4H")}.`,
+      o: ["7,500", "7,700", "10,200", "20,200"], a: 1,
+      why: "3 × 50 × 50 = 7,500, plus 4 × 50 = 200 → 7,700. An LSTM at the same size would have 4 × 50 × 101 = 20,200." },
+    { calc: true, q: "At D = H = 128 the LSTM has 131,584 weights and the GRU has 98,688. How many more does the LSTM have, and why?",
+      o: ["16,448: half a block", "32,896: one extra weight block", "49,664: the SRU’s size", "98,688: twice as many"], a: 1,
+      why: "131,584 − 98,688 = 32,896 = H(D + H + 1) = 128 × 257, exactly one block. LSTM has 4 blocks, GRU has 3." },
+    { calc: true, q: "One LSTM step has f<sub>t</sub> = 0.2, c<sub>t−1</sub> = 1.5, i<sub>t</sub> = 0.9, g<sub>t</sub> = −0.5, o<sub>t</sub> = 0.6. What is h<sub>t</sub>?",
+      o: ["−0.089", "−0.150", "0.180", "0.381"], a: 0,
+      why: "c<sub>t</sub> = 0.2(1.5) + 0.9(−0.5) = 0.30 − 0.45 = −0.15. h<sub>t</sub> = 0.6 × tanh(−0.15) = 0.6 × (−0.149) = −0.089. (0.381 drops the minus sign on g<sub>t</sub>.)" },
+    { calc: true, q: "At initialization, the weighted input to the forget gate is 0 and the forget bias is b<sub>f</sub> = 1. What is f<sub>t</sub> = σ(0 + 1)?",
+      o: ["0.500", "0.731", "0.762", "1.000"], a: 1,
+      why: "σ(1) = 1/(1 + e<sup>−1</sup>) = 0.731, so the cell starts by keeping most of its state. With b<sub>f</sub> = 0 it would be 0.5. (0.762 is tanh(1).)" },
+    { calc: true, q: "One GRU step has z<sub>t</sub> = 0.9, h<sub>t−1</sub> = −0.2, h̃<sub>t</sub> = 0.6. What is h<sub>t</sub>?",
+      o: ["0.52", "−0.12", "0.40", "0.58"], a: 0,
+      why: "h<sub>t</sub> = (1 − 0.9)(−0.2) + 0.9(0.6) = −0.02 + 0.54 = 0.52. Swapping z and 1 − z gives −0.12." },
+    { calc: true, q: "One SRU step (g = tanh) has f<sub>t</sub> = 0.5, c<sub>t−1</sub> = 0.4, x̃<sub>t</sub> = 1.0, r<sub>t</sub> = 0.2, x<sub>t</sub> = −0.5. What is h<sub>t</sub>?",
+      o: ["0.121", "−0.279", "0.700", "−0.400"], a: 1,
+      why: "c<sub>t</sub> = 0.5(0.4) + 0.5(1.0) = 0.7. h<sub>t</sub> = 0.2 × tanh(0.7) + 0.8 × (−0.5) = 0.2 × 0.604 − 0.4 = 0.121 − 0.4 = −0.279. (0.121 forgets the highway term.)" }
+  ]
+},
+/* ======================= LECTURE: Transfer Learning ======================= */
+{ id: 7, key: "transfer", group: "lecture", seed: 42, name: "Transfer Learning", full: "Transfer Learning in CNNs",
+  tf: [
+    ["ImageNet-1k has about 1.28 million labeled training images.", true,
+     "It is the source of most public pretrained weights."],
+    ["In Pan and Yang’s view, a domain is D = {X, P(X)} and a task is T = {Y, f}.", true,
+     "Transfer helps when source and target differ in D, T, or both."],
+    ["In the offline-features variant of feature extraction, features are extracted once and a logistic regression or SVM is trained on them.", true,
+     "Variant B (Razavian et al., 2014): very cheap and easy to cross-validate."],
+    ["The main risk of partial fine-tuning is forgetting if the learning rate is too high.", true,
+     "That is why the unfrozen top blocks get a much smaller learning rate than the head."],
+    ["Inception-style networks expect 224 × 224 inputs.", false,
+     "Most ImageNet CNNs expect 224 × 224; Inception-style networks use 299 × 299."],
+    ["Horizontal flips are a safe augmentation for every domain, including images of text.", false,
+     "Use label-preserving transforms for your domain: flips suit photos, but not text or oriented structures."],
+    ["In PyTorch, layers with requires_grad = False are skipped in the forward pass.", false,
+     "Frozen layers still run in the forward pass; they just receive no updates."],
+    ["For a small target dataset that differs from the source, use mid-level features, fine-tune only a few layers, augment heavily, and compare against scratch.", true,
+     "The “cautious, partial transfer” cell of the size-and-similarity guide."],
+    ["Raghu et al. (2019) found ImageNet pretraining gave large accuracy gains in every medical imaging setting.", false,
+     "They found limited gains in some settings, and small custom CNNs performed comparably."],
+    ["CLIP is pretrained on image-text pairs and gives strong linear-probe features.", true,
+     "Listed under image-text supervision in “Beyond supervised ImageNet pretraining.”"]
+  ],
+  match: [
+    { title: "A. Training strategies",
+      intro: "Match each strategy to its description. One choice is not used.",
+      bank: [
+        "Head plus the top block(s); main risk is forgetting if the learning rate is too high",
+        "Align source and target feature distributions, for example adversarially",
+        "All weights from random initialization; overfits small data",
+        "Fine-tune first on a related, larger dataset, then on the target",
+        "New head only, backbone frozen; the features cannot adapt",
+        "All weights from pretrained initialization; risks overfitting and forgetting"
+      ],
+      items: [["Train from scratch", "C"], ["Feature extraction", "E"], ["Partial fine-tuning", "A"], ["Full fine-tuning", "F"], ["Intermediate pretraining", "D"]],
+      why: "B is domain adaptation, which is not listed." },
+    { title: "B. Sources of pretrained weights",
+      intro: "Match each source of pretraining to an example. One choice is not used.",
+      bank: [
+        "CLIP",
+        "SimCLR, MoCo, DINO",
+        "RadImageNet",
+        "A COCO-pretrained Faster R-CNN box predictor",
+        "Big Transfer (BiT) on ImageNet-21k and JFT-300M",
+        "ResNet, EfficientNet, MobileNet from torchvision or Keras"
+      ],
+      items: [["Supervised ImageNet-1k", "F"], ["Larger labeled sets", "E"], ["Self-supervised", "B"], ["Image-text supervision", "A"], ["Domain-specific (radiology)", "C"]],
+      why: "D is a detection model, which appears in the detection-transfer slide, not in the pretraining-sources table." }
+  ],
+  mc: [
+    { q: "Why does training ResNet-50 from scratch on 800 labeled images usually fail?",
+      o: ["ResNet-50 cannot take 224 × 224 images", "With 25.6 M parameters far outnumbering the samples, a random network memorizes the training set", "BatchNorm does not work without pretrained weights", "The loss function must be changed"], a: 1,
+      why: "Overfitting, plus days of multi-GPU compute and expensive expert labels, motivate transfer learning." },
+    { q: "Which CNN layers are the least transferable and usually replaced?",
+      o: ["Early layers (edges, color blobs)", "Middle layers (textures)", "Final layers (class-specific evidence for the 1,000 source classes)", "All layers transfer equally"], a: 2,
+      why: "Generality decreases with depth: early layers are generic, final layers are tied to the source classes (Zeiler and Fergus; Yosinski et al., 2014)." },
+    { q: "Your target dataset is large and similar to ImageNet. What does the guideline suggest?",
+      o: ["Feature extraction only", "Fine-tune the top or all layers with a small learning rate", "Train from scratch and ignore pretrained weights", "Truncate the backbone and reinitialize the deep stages"], a: 1,
+      why: "Enough data to adapt the features; a small learning rate preserves what was learned." },
+    { q: "What does Keras ResNet50’s preprocess_input expect?",
+      o: ["RGB scaled to [0, 1] with ImageNet mean and std", "BGR with channel means subtracted", "Raw pixels; the model rescales inside", "Grayscale input only"], a: 1,
+      why: "The RGB [0, 1] mean/std scheme is torchvision’s; in-model rescaling is EfficientNet in Keras." },
+    { q: "How is transfer usually done for semantic segmentation?",
+      o: ["Both encoder and decoder are ImageNet-pretrained", "The encoder (e.g., U-Net, DeepLab) is ImageNet-initialized, and the decoder starts random", "Only the decoder is pretrained", "Segmentation cannot use pretrained weights"], a: 1,
+      why: "For example encoder_weights=\"imagenet\" in segmentation_models_pytorch. Swap the head, keep the backbone." },
+    { q: "In a chest X-ray project, how should the data be split to prevent leakage?",
+      o: ["Randomly by image", "By patient, so no patient appears in both train and test", "By file name alphabetically", "By image brightness"], a: 1,
+      why: "Split by patient, subject or scene. Also check duplicates and overlap with the pretraining data." },
+    { q: "Besides the fine-tuned model, what should a fair evaluation of transfer include?",
+      o: ["Only the best single run", "A from-scratch baseline and a linear probe on frozen features", "Only training accuracy", "A larger head for comparison"], a: 1,
+      why: "Also report variance over several seeds and learning curves at 10%, 25%, 50% and 100% of the labels." },
+    { calc: true, q: "You replace ResNet-50’s 2048 × 1000 fc layer with a head for C = 7 classes. How many parameters does the new head have?",
+      o: ["7,175", "14,336", "14,343", "2,049,000"], a: 2,
+      why: "2048 × 7 + 7 = 14,343. 14,336 forgets the biases." },
+    { calc: true, q: "ResNet-50’s head has 2.05 M of its 25.6 M parameters. What share of the model is the head?",
+      o: ["About 0.8%", "About 8%", "About 12.5%", "About 89%"], a: 1,
+      why: "2.05 / 25.6 = 0.080 ≈ 8%. Global average pooling keeps the head small. VGG-16’s head is about 89%." },
+    { calc: true, q: "VGG-16’s three FC layers are 25088 × 4096, 4096 × 4096, and 4096 × 1000. How many weights do they hold (ignore biases)?",
+      o: ["About 16.8 M", "About 102.8 M", "About 123.6 M", "About 138.4 M"], a: 2,
+      why: "102,760,448 + 16,777,216 + 4,096,000 = 123,633,664 ≈ 123.6 M. 138.4 M is the whole network; 102.8 M is just the first FC layer." },
+    { calc: true, q: "Instead of a single layer, you add a small head on ResNet-50: Dense 2048 → 256, then Dense 256 → 5, both with biases. How many trainable parameters?",
+      o: ["10,245", "524,288", "525,824", "525,829"], a: 3,
+      why: "2048 × 256 + 256 = 524,544. 256 × 5 + 5 = 1,285. Total 525,829. Larger heads overfit when data are scarce, so keep the head small." },
+    { calc: true, q: "The new head uses a learning rate of 1e-3. Following the 10× to 100× rule, what range should the backbone learning rate be in?",
+      o: ["1e-2 to 1e-1", "1e-3 (the same)", "1e-4 to 1e-5", "1e-7 to 1e-8"], a: 2,
+      why: "1e-3 / 10 = 1e-4 and 1e-3 / 100 = 1e-5. That matches the slide’s layer4 at 1e-4 and optional layer3 at 1e-5." },
+    { calc: true, q: "A red-channel value of 0.7 (after scaling to [0, 1]) is normalized for a torchvision model with mean 0.485 and std 0.229. What is the result?",
+      o: ["0.215", "0.400", "0.939", "3.057"], a: 2,
+      why: "(0.7 − 0.485) / 0.229 = 0.215 / 0.229 = 0.939. 0.215 skips the std division; 3.057 skips the mean subtraction." },
+    { calc: true, q: "Fine-tuning on a small dataset with three seeds gives accuracies of 0.82, 0.86, and 0.84. How should you report it (mean ± sample standard deviation)?",
+      o: ["0.84 ± 0.02", "0.84 ± 0.04", "0.86 ± 0.02", "0.84 ± 0.0004"], a: 0,
+      why: "Mean = 2.52 / 3 = 0.84. Squared deviations 0.0004, 0.0004, 0 → sample variance 0.0008 / 2 = 0.0004 → std = 0.02. 0.04 is the range, 0.0004 is the variance." },
+    { calc: true, q: "To use grayscale input, you sum a first-layer filter over RGB. At one position its weights are R = 0.2, G = −0.1, B = 0.4. What is the single-channel weight?",
+      o: ["0.167", "0.400", "0.500", "0.700"], a: 2,
+      why: "0.2 − 0.1 + 0.4 = 0.5. This equals replicating the gray value x to three channels: 0.2x − 0.1x + 0.4x = 0.5x. (0.167 is the mean; 0.7 sums absolute values.)" }
+  ]
+}
+];
+
+/* ---------- fixed shuffle of MC choices (same order every visit) ---------- */
+const SEED = 29;
+function rng(seed){ return () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; }; }
+SETS.forEach(S => S.mc.forEach((m, i) => {
+  const r = rng(S.id * 1000 + i * 37 + (S.seed ?? SEED)), idx = m.o.map((_, k) => k);
+  for (let k = idx.length - 1; k > 0; k--){ const j = Math.floor(r() * (k + 1)); [idx[k], idx[j]] = [idx[j], idx[k]]; }
+  m.o = idx.map(k => m.o[k]); m.a = idx.indexOf(m.a);
+}));
+
+/* ---------- rendering ---------- */
+const LETTERS = "ABCDEF";
+const exam = document.getElementById("exam");
+const tabs = document.getElementById("tabs");
+let current = 1;
+const state = {}; // per set: {graded:false, key:false}
+
+function store(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function load(k){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; }catch(e){ return null; } }
+
+SETS.forEach(s => { s.key = s.key || "set-" + s.id; s.group = s.group || "mixed"; });
+[["mixed", "Mixed sets"], ["lecture", "By lecture"]].forEach(([g, label]) => {
+  const row = document.createElement("div"); row.className = "tab-group";
+  row.innerHTML = `<span class="tab-label">${label}</span>`;
+  const list = document.createElement("div"); list.className = "tabs"; list.setAttribute("role", "tablist");
+  SETS.filter(s => s.group === g).forEach(s => {
+    const b = document.createElement("button");
+    b.className = "tab"; b.type = "button"; b.setAttribute("role", "tab"); b.id = "tab-" + s.id;
+    b.textContent = s.name;
+    b.addEventListener("click", () => { location.hash = s.key; });
+    list.appendChild(b);
+  });
+  row.appendChild(list); tabs.appendChild(row);
+});
+
+function render(set){
+  const S = set, p = "s" + S.id;
+  let n = 0, html = "";
+  const nM = S.match.reduce((a, g) => a + g.items.length, 0), nC = S.mc.filter(m => m.calc).length;
+  html += `<div class="set-title"><span class="eyebrow">${S.group === "lecture" ? "Lecture quiz" : "Mixed practice set"}</span><h2>${S.full || S.name + ": all four lectures"}</h2></div>`;
+  html += `<section class="part"><div class="part-head"><h2>Part I · True or False</h2><span class="pts">${S.tf.length} items · 1 pt each</span></div>
+    <p class="directions">Decide whether each statement is true or false.</p>`;
+  S.tf.forEach((t, i) => {
+    n++;
+    html += `<div class="q" data-kind="tf" data-i="${i}"><span class="n">${n}.</span><div class="body">
+      <p class="stem">${t[0]}</p>
+      <div class="tf">
+        <label class="choice" data-val="T"><input type="radio" name="${p}-tf-${i}" id="${p}-tf-${i}-t" value="T"><span>True</span></label>
+        <label class="choice" data-val="F"><input type="radio" name="${p}-tf-${i}" id="${p}-tf-${i}-f" value="F"><span>False</span></label>
+      </div><div class="feedback" hidden></div></div></div>`;
+  });
+  html += `</section>`;
+
+  html += `<section class="part"><div class="part-head"><h2>Part II · Matching</h2><span class="pts">${nM} items · 1 pt each</span></div>
+    <p class="directions">Pick the letter of the matching choice. Each choice is used at most once.</p>`;
+  S.match.forEach((g, gi) => {
+    html += `<div class="match-block"><h3>${g.title}</h3><p class="directions">${g.intro}</p><ul class="bank">`;
+    g.bank.forEach((b, bi) => { html += `<li><b>${LETTERS[bi]}</b><span>${b}</span></li>`; });
+    html += `</ul>`;
+    g.items.forEach((it, ii) => {
+      n++;
+      const id = `${p}-m-${gi}-${ii}`;
+      html += `<div class="q" data-kind="m" data-g="${gi}" data-i="${ii}"><span class="n">${n}.</span><div class="body">
+        <div class="mrow"><label class="stem" for="${id}">${it[0]}</label>
+        <select id="${id}"><option value="">—</option>${g.bank.map((_, bi) => `<option value="${LETTERS[bi]}">${LETTERS[bi]}</option>`).join("")}</select></div>
+        <div class="feedback" hidden></div></div></div>`;
+    });
+    html += `</div>`;
+  });
+  html += `</section>`;
+
+  html += `<section class="part"><div class="part-head"><h2>Part III · Multiple Choice</h2><span class="pts">${S.mc.length} items · 1 pt each · ${nC} computations</span></div>
+    <p class="directions">Choose the best answer. Items tagged <span class="calc-tag">Compute</span> need a short calculation; round to 3 decimals.</p>`;
+  S.mc.forEach((m, i) => {
+    n++;
+    html += `<div class="q" data-kind="mc" data-i="${i}"><span class="n">${n}.</span><div class="body">
+      <p class="stem">${m.calc ? '<span class="calc-tag">Compute</span>' : ''}${m.q}</p><div class="opts">`;
+    m.o.forEach((o, oi) => {
+      html += `<label class="choice" data-val="${oi}"><input type="radio" name="${p}-mc-${i}" id="${p}-mc-${i}-${oi}" value="${oi}"><span><b>${LETTERS[oi]}</b><span>${o}</span></span></label>`;
+    });
+    html += `</div><div class="feedback" hidden></div></div></div>`;
+  });
+  html += `</section>`;
+  exam.innerHTML = html;
+
+  // restore saved answers
+  const saved = load("cpecog2-q2-" + S.id) || {};
+  exam.querySelectorAll("input[type=radio]").forEach(r => { if (saved[r.name] === r.value) r.checked = true; });
+  exam.querySelectorAll("select").forEach(s => { if (saved[s.id]) s.value = saved[s.id]; });
+  exam.querySelectorAll(".q").forEach(q => { if (answerOf(q).given) grade(q); });
+}
+exam.addEventListener("change", e => {
+  const q = e.target.closest(".q");
+  if (q && answerOf(q).given){ grade(q); save(); updateScore(); }
+});
+
+function save(){
+  const S = SETS[current - 1], data = {};
+  exam.querySelectorAll("input[type=radio]:checked").forEach(r => data[r.name] = r.value);
+  exam.querySelectorAll("select").forEach(s => { if (s.value) data[s.id] = s.value; });
+  store("cpecog2-q2-" + S.id, data);
+}
+
+function answerOf(q){
+  const S = SETS[current - 1], k = q.dataset.kind, i = +q.dataset.i;
+  if (k === "tf"){ const t = S.tf[i]; const r = q.querySelector("input:checked");
+    return { key: t[1] ? "T" : "F", given: r ? r.value : "", why: t[2], label: t[1] ? "True" : "False" }; }
+  if (k === "m"){ const g = S.match[+q.dataset.g]; const it = g.items[i]; const s = q.querySelector("select");
+    const li = LETTERS.indexOf(it[1]);
+    return { key: it[1], given: s.value, why: g.why, label: `${it[1]}. ${g.bank[li]}`, groupWhy: true }; }
+  const m = S.mc[i]; const r = q.querySelector("input:checked");
+  return { key: String(m.a), given: r ? r.value : "", why: m.why, label: `${LETTERS[m.a]}. ${m.o[m.a]}` };
+}
+
+function unmark(q){
+  q.classList.remove("correct", "wrong", "locked", "peek");
+  const f = q.querySelector(".feedback"); f.hidden = true; f.innerHTML = "";
+  q.querySelectorAll(".choice").forEach(c => c.classList.remove("is-key", "is-miss"));
+  q.querySelectorAll("input, select").forEach(el => el.disabled = false);
+}
+
+// Grade one question the moment it is answered, then lock it so the first pick counts.
+function grade(q){
+  unmark(q);
+  const a = answerOf(q), ok = a.given === a.key, f = q.querySelector(".feedback");
+  q.querySelectorAll(".choice").forEach(c => {
+    if (c.dataset.val === a.key) c.classList.add("is-key");
+    else if (c.dataset.val === a.given) c.classList.add("is-miss");
+  });
+  q.classList.add(ok ? "correct" : "wrong", "locked");
+  const verdict = ok ? "Correct." : (a.given ? "Incorrect." : "Not answered.");
+  const showAns = !ok || q.dataset.kind === "m";
+  f.innerHTML = `<span class="verdict">${verdict}</span>${showAns ? `<b>${ok ? "" : "Answer: "}${a.label}</b>. ` : ""}${a.why}`;
+  f.hidden = false;
+  q.querySelectorAll("input, select").forEach(el => el.disabled = true);
+}
+
+// Reveal the answer without grading (answer-key mode) on questions not yet answered.
+function peek(q){
+  const a = answerOf(q), f = q.querySelector(".feedback");
+  q.classList.add("peek");
+  q.querySelectorAll(".choice").forEach(c => { if (c.dataset.val === a.key) c.classList.add("is-key"); });
+  f.innerHTML = `<span class="verdict">Answer:</span><b>${a.label}</b>. ${a.why}`;
+  f.hidden = false;
+}
+
+function updateScore(){
+  const S = SETS[current - 1];
+  const T = { tf: S.tf.length, m: S.match.reduce((a, g) => a + g.items.length, 0), mc: S.mc.length };
+  const got = { tf: 0, m: 0, mc: 0 }; let done = 0;
+  exam.querySelectorAll(".q.locked").forEach(q => { done++; if (q.classList.contains("correct")) got[q.dataset.kind]++; });
+  const all = T.tf + T.m + T.mc;
+  document.getElementById("sc-tf").textContent = `${got.tf} / ${T.tf}`;
+  document.getElementById("sc-match").textContent = `${got.m} / ${T.m}`;
+  document.getElementById("sc-mc").textContent = `${got.mc} / ${T.mc}`;
+  document.getElementById("sc-total").textContent = `${got.tf + got.m + got.mc} / ${all}`;
+  document.getElementById("sc-done").textContent = `${done} of ${all} answered`;
+}
+
+function setKey(on){
+  keyOn = on; document.getElementById("btn-key").textContent = on ? "Hide answer key" : "Show answer key";
+  exam.querySelectorAll(".q:not(.locked)").forEach(q => { unmark(q); if (on) peek(q); });
+}
+
+function show(id){
+  current = id;
+  SETS.forEach(s => document.getElementById("tab-" + s.id).setAttribute("aria-selected", s.id === id ? "true" : "false"));
+  render(SETS[id - 1]);
+  keyOn = false; document.getElementById("btn-key").textContent = "Show answer key";
+  updateScore();
+}
+
+let keyOn = false;
+document.getElementById("btn-check").addEventListener("click", () => {
+  setKey(false);
+  exam.querySelectorAll(".q:not(.locked)").forEach(grade);
+  updateScore();
+});
+document.getElementById("btn-key").addEventListener("click", () => setKey(!keyOn));
+document.getElementById("btn-reset").addEventListener("click", () => {
+  exam.querySelectorAll(".q").forEach(unmark);
+  exam.querySelectorAll("input[type=radio]").forEach(r => r.checked = false);
+  exam.querySelectorAll("select").forEach(s => s.value = "");
+  store("cpecog2-q2-" + current, {});
+  setKey(false); updateScore();
+  window.scrollTo({ top: 0 });
+});
+
+function route(){
+  const s = SETS.find(x => "#" + x.key === location.hash);
+  show(s ? s.id : 1);
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
+
+</body></html>

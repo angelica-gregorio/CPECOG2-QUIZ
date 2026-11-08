@@ -1,0 +1,463 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style id="light-mode">
+:root {
+  color-scheme: light !important;
+  --bg: #F2F6F3 !important; --surface: #FFFFFF !important; --ink: #14231B !important;
+  --muted: #566A5F !important; --line: #D3DDD6 !important; --primary: #0F5132 !important;
+  --on-primary: #FFFFFF !important; --primary-soft: #E3EFE7 !important; --gold: #B8891A !important;
+  --good: #14693B !important; --good-bg: #E2F3E8 !important; --bad: #B3372D !important;
+  --bad-bg: #FBE8E6 !important;
+}
+html, body { color-scheme: light !important; }
+</style></head><body>
+<title>Recurrent Networks Quiz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: one narrow reading column; masthead, a sticky score and tab bar, then one quiz part at a time. */
+:root {
+  --bg: #F2F6F3;
+  --surface: #FFFFFF;
+  --ink: #14231B;
+  --muted: #566A5F;
+  --line: #D3DDD6;
+  --primary: #0F5132;
+  --on-primary: #FFFFFF;
+  --primary-soft: #E3EFE7;
+  --gold: #B8891A;
+  --good: #14693B;
+  --good-bg: #E2F3E8;
+  --bad: #B3372D;
+  --bad-bg: #FBE8E6;
+  --display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1713; --surface: #16221C; --ink: #E6EFE9; --muted: #93A69B; --line: #2A3B32;
+    --primary: #6FCB9A; --on-primary: #0B1A12; --primary-soft: #1A2D23; --gold: #E0B341;
+    --good: #6FCB9A; --good-bg: #153326; --bad: #F29B92; --bad-bg: #3A1D1A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1713; --surface: #16221C; --ink: #E6EFE9; --muted: #93A69B; --line: #2A3B32;
+  --primary: #6FCB9A; --on-primary: #0B1A12; --primary-soft: #1A2D23; --gold: #E0B341;
+  --good: #6FCB9A; --good-bg: #153326; --bad: #F29B92; --bad-bg: #3A1D1A;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 16px/1.55 var(--body);
+  padding-block: 0 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 30; background: var(--bg);
+}
+.wrap { max-width: 760px; margin: 0 auto; }
+.masthead { padding-block: 28px 18px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+h1 { font: 700 clamp(28px, 6vw, 40px)/1.1 var(--display); margin: 0 0 8px; text-wrap: balance; color: var(--primary); }
+.sub { margin: 0; color: var(--muted); max-width: 60ch; }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); padding-top: 8px; }
+.score-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-bottom: 8px; }
+.score { font: 500 22px/1 var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.score small { font-size: 13px; color: var(--muted); }
+.track { flex: 1 1 160px; min-width: 120px; height: 8px; border-radius: 4px; background: var(--line); position: relative; overflow: hidden; }
+.track i { position: absolute; inset: 0 auto 0 0; display: block; }
+.track .att { background: var(--gold); opacity: .45; }
+.track .earn { background: var(--primary); }
+.attempted { font: 12px/1 var(--mono); color: var(--muted); white-space: nowrap; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.tab { border: 0; background: none; color: var(--muted); font: 500 14px/1.2 var(--body); padding: 10px 12px; border-bottom: 3px solid transparent; white-space: nowrap; cursor: pointer; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--gold); }
+.tab .st { font: 12px var(--mono); color: var(--muted); margin-left: 6px; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+main { padding-top: 22px; }
+.part-head h2 { font: 700 24px/1.2 var(--display); margin: 0 0 4px; text-wrap: balance; }
+.part-head p { margin: 0 0 18px; color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.q { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
+.qtop { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+.num { flex: none; font: 500 13px/1 var(--mono); color: var(--on-primary); background: var(--primary); border-radius: 6px; padding: 6px 7px; }
+.qtext { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.tag { display: inline-block; font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold); border-radius: 4px; padding: 3px 5px; margin-left: 8px; vertical-align: 2px; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opts.two { flex-direction: row; }
+.opts.two .opt { flex: 1; justify-content: center; }
+.opt { display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; min-width: 0; }
+.opt:hover:not(:disabled) { border-color: var(--primary); background: var(--primary-soft); }
+.opt:disabled { cursor: default; }
+.opt .k { flex: none; font: 500 13px/1.5 var(--mono); color: var(--muted); }
+.opt span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.opt.correct { border-color: var(--good); background: var(--good-bg); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.opt.picked { border-color: var(--primary); }
+.why { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--primary-soft); font-size: 14px; overflow-wrap: anywhere; }
+.why b.ok { color: var(--good); }
+.why b.no { color: var(--bad); }
+.calc { font-family: var(--mono); font-size: 13px; display: block; margin-top: 6px; color: var(--muted); }
+
+.mgrid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.mrows { display: flex; flex-direction: column; gap: 8px; }
+.mrow { display: grid; grid-template-columns: auto minmax(0, 1fr) 84px; gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.mrow.correct { border-color: var(--good); background: var(--good-bg); }
+.mrow.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.mrow .t { min-width: 0; overflow-wrap: anywhere; }
+.mrow .fix { grid-column: 2 / 4; font: 12px var(--mono); color: var(--bad); }
+select { font: 500 14px var(--mono); padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); width: 100%; }
+.legend { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.legend li { display: flex; gap: 10px; min-width: 0; }
+.legend b { flex: none; font: 500 13px/1.5 var(--mono); color: var(--primary); width: 1.2em; }
+.legend span { min-width: 0; overflow-wrap: anywhere; }
+.legend-title { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+
+.given { font-size: 15px; margin: 0 0 12px; overflow-wrap: anywhere; }
+.fields { display: flex; flex-direction: column; gap: 10px; }
+.field { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 190px); gap: 6px 12px; align-items: center; }
+.field label { font-size: 14px; min-width: 0; overflow-wrap: anywhere; }
+.field input { font: 500 15px var(--mono); font-variant-numeric: tabular-nums; width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.field input:disabled { opacity: 1; }
+.field.ok input { border-color: var(--good); background: var(--good-bg); }
+.field.no input { border-color: var(--bad); background: var(--bad-bg); }
+.field .exp { grid-column: 1 / -1; font: 12px var(--mono); color: var(--bad); }
+.sol { margin-top: 14px; padding: 12px; border-radius: 8px; background: var(--primary-soft); font: 13px/1.7 var(--mono); overflow-x: auto; white-space: pre; }
+.sol-title { font: 600 13px var(--body); display: block; margin-bottom: 4px; white-space: normal; }
+.pts { font: 500 12px var(--mono); color: var(--muted); margin-left: auto; white-space: nowrap; }
+.btn { font: 600 15px var(--body); padding: 11px 18px; border-radius: 8px; border: 1px solid var(--primary); background: var(--primary); color: var(--on-primary); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--primary); }
+.btn:disabled { opacity: .5; cursor: default; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+
+.result { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+.big { font: 700 clamp(40px, 10vw, 60px)/1 var(--display); color: var(--primary); }
+.big small { font: 500 18px var(--mono); color: var(--muted); }
+.rows { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
+.rrow .rl { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; margin-bottom: 5px; }
+.rrow .rl span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.rrow .miss { font: 12px var(--mono); color: var(--muted); margin-top: 4px; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .mgrid { grid-template-columns: minmax(0, 1fr); }
+  .field { grid-template-columns: minmax(0, 1fr); }
+  .opts.two { flex-direction: row; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .track i { transition: width .35s ease; }
+  .opt, .btn { transition: background .15s, border-color .15s; }
+}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">CPECOG2 · CpE Elective 2 · Deep Neural Networks</p>
+    <h1>Recurrent Neural Networks</h1>
+    <p class="sub">50 points across four parts. Answers are checked as you go, and each one shows the reasoning or the worked computation.</p>
+  </header>
+  <div class="bar">
+    <div class="score-row">
+      <div class="score" id="score" aria-live="polite">0 <small>/ 50 pts</small></div>
+      <div class="track" title="Gold: points attempted. Green: points earned."><i class="att" id="att"></i><i class="earn" id="earn"></i></div>
+      <div class="attempted" id="attempted">0 attempted</div>
+    </div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+  </div>
+  <main id="view"></main>
+</div>
+
+<script>
+var TF = [
+  ["The weights W<sub>xh</sub>, W<sub>hh</sub>, and W<sub>hy</sub> of a vanilla RNN are the same at every time step.", true,
+   "Parameter sharing across time lets a pattern learned at one position be recognized at any other, and lets T vary."],
+  ["The number of parameters in a vanilla RNN grows with the sequence length T.", false,
+   "Parameter count is independent of T. Only the compute, which grows as T·H(D + H), and the stored states depend on T."],
+  ["Backpropagation Through Time (BPTT) is a new learning algorithm that is different from ordinary backpropagation.", false,
+   "BPTT is ordinary backpropagation applied to the unrolled graph, a deep feed-forward network with tied weights."],
+  ["Because the weights are tied, the gradient of a shared weight is the sum of its contributions from all time steps.", true,
+   "Each of the T copies of the cell contributes a term, and the contributions are summed."],
+  ["Gradient norm clipping is the main remedy for vanishing gradients.", false,
+   "Clipping prevents explosion. Gated units (LSTM, GRU) make it possible to preserve information across long spans."],
+  ["In truncated BPTT, the hidden state value is carried into the next chunk, but the gradient is cut at the chunk border.", true,
+   "The forward pass still sees earlier context. The carried state is detached, so no gradient crosses the border."],
+  ["A bidirectional RNN is a good choice for streaming inference or forecasting.", false,
+   "It needs the whole sequence, so it suits offline tasks only. Streaming and forecasting cannot see the future."],
+  ["Setting the LSTM forget-gate bias to 1 makes the cell start out by remembering.", true,
+   "A forget gate near 1 passes the old cell state through, so gradients are not squashed early in training."],
+  ["Storing the states for BPTT over a whole sequence needs memory that does not depend on T.", false,
+   "Memory is O(T·H), growing linearly with T. This motivates truncated BPTT, which needs O(k)."],
+  ["Perplexity for a language model equals the exponential of the mean cross-entropy.", true,
+   "Perplexity = exp(mean cross-entropy), so lower is better."]
+];
+
+var MM_T = ["Many-to-one","Encoder-decoder","Teacher forcing","Gradient norm clipping","Truncated BPTT","Forget gate","GRU","Attention","Perplexity","Persistence baseline"];
+var MM_D = [
+  "Backpropagates only k steps; the state value is carried but the gradient is cut at chunk borders",
+  "Each decoder step forms a weighted sum of all encoder states",
+  "Scales the old cell state: near 1 keeps it, near 0 erases it",
+  "A sequence goes in and a single label comes out",
+  "Rescales g to τg/‖g‖ whenever the norm ‖g‖ exceeds τ",
+  "A decoder is trained on ground-truth previous tokens, which can mismatch test time (exposure bias)",
+  "exp of the mean cross-entropy, used to report language models",
+  "Merges the cell and hidden state using an update gate and a reset gate",
+  "A forecasting baseline that predicts the previous value",
+  "Input and output lengths differ, as in translation or summarization"
+];
+var MM_A = ["D","J","F","E","A","C","H","B","G","I"];
+var LET = ["A","B","C","D","E","F","G","H","I","J"];
+
+var MC = [
+  {q:"A vanilla RNN has D = 30 input features, H = 64 hidden units, and C = 5 output classes. Using H(D + H + 1) + C(H + 1), how many parameters does it have?", calc:true,
+   o:["6,080","6,336","6,405","6,720"], a:2, why:"H(D + H + 1) = 64 × 95 = 6,080 for the recurrent layer, and C(H + 1) = 5 × 65 = 325 for the output layer. Total = 6,405."},
+  {q:"Why do gradients across many steps tend to vanish in a vanilla RNN?", calc:false,
+   o:["Shared weights make the gradient an average, which is always small","The gradient is a product of k Jacobians diag(1 − h²)·W<sub>hh</sub>; if their largest singular value is below 1 the product shrinks exponentially","BPTT only propagates gradients through the output layer","tanh outputs are always zero for long sequences"], a:1,
+   why:"Since tanh′ ≤ 1, a W<sub>hh</sub> with spectral radius below about 1 makes the product shrink exponentially with t − k."},
+  {q:"A scalar RNN has w = 0.5, u = 0.8, b = 0, h<sub>0</sub> = 0 and tanh activation. With x<sub>1</sub> = 2 and x<sub>2</sub> = 0, what is h<sub>2</sub>?", calc:true,
+   o:["0.543","0.609","0.762","0.380"], a:0,
+   why:"a<sub>1</sub> = 0.5(2) + 0.8(0) = 1, so h<sub>1</sub> = tanh(1) = 0.762. Then a<sub>2</sub> = 0.5(0) + 0.8(0.762) = 0.609, and h<sub>2</sub> = tanh(0.609) = 0.543."},
+  {q:"The gradient is g = [12, 16] and the clipping threshold is τ = 5. After norm clipping (g ← g·τ/‖g‖), the gradient is:", calc:true,
+   o:["[12, 16]","[2.4, 3.2]","[3, 4]","[0.6, 0.8]"], a:2,
+   why:"‖g‖ = √(144 + 256) = 20 > 5, so scale by 5/20 = 0.25: [12, 16] × 0.25 = [3, 4]. The direction is kept and the new norm is 5."},
+  {q:"A per-step gradient factor of 0.8 is applied over 10 steps. What fraction of the gradient remains?", calc:true,
+   o:["0.8%","10.7%","20%","80%"], a:1, why:"0.8¹⁰ = 0.107, so about 10.7% remains. This is the vanishing gradient in miniature."},
+  {q:"In PyTorch, what does <code>h = h.detach()</code> at the start of each chunk do in truncated BPTT?", calc:false,
+   o:["Resets the hidden state to zero","Keeps the state value but treats it as a constant, so no gradient crosses the chunk border","Clips the gradient norm","Freezes the RNN weights"], a:1,
+   why:"The forward pass still uses the earlier context, but the gradient is cut at the border. Memory becomes O(k) instead of O(T)."},
+  {q:"With D = 40 and H = 100, how many recurrent-layer parameters does a GRU have (3 gate blocks, one bias vector, H(D + H + 1) per block)?", calc:true,
+   o:["14,100","28,200","42,300","56,400"], a:2, why:"H(D + H + 1) = 100 × 141 = 14,100 per block. A GRU has 3 blocks, so 3 × 14,100 = 42,300. (14,100 is a vanilla RNN, 56,400 is an LSTM.)"},
+  {q:"An LSTM has c<sub>t−1</sub> = 2.0, f<sub>t</sub> = 0.5, i<sub>t</sub> = 0.8, and g<sub>t</sub> = −0.5. What is c<sub>t</sub>?", calc:true,
+   o:["0.6","1.4","0.5","1.0"], a:0, why:"c<sub>t</sub> = f<sub>t</sub> ⊙ c<sub>t−1</sub> + i<sub>t</sub> ⊙ g<sub>t</sub> = 0.5(2.0) + 0.8(−0.5) = 1.0 − 0.4 = 0.6."},
+  {q:"Which validation protocol is correct for an electricity-load forecasting model?", calc:false,
+   o:["Randomly shuffle all windows into train and test","Chronological or walk-forward validation","Train and test on the same period","Shuffle the steps inside each window"], a:1,
+   why:"Never shuffle randomly. Split chronologically, compute scaling statistics on training data only, and compare against a persistence baseline."},
+  {q:"For a 3-class softmax output [0.7, 0.2, 0.1] where the true class is the second one, the output gradient g<sub>t</sub> = softmax(o<sub>t</sub>) − y<sub>t</sub> is:", calc:true,
+   o:["[0.7, −0.8, 0.1]","[−0.3, 0.2, 0.1]","[0.7, 0.2, −0.9]","[0.3, 0.8, 0.9]"], a:0,
+   why:"The one-hot target is [0, 1, 0]. Subtracting gives [0.7 − 0, 0.2 − 1, 0.1 − 0] = [0.7, −0.8, 0.1]."}
+];
+
+var CP = [
+  {pts:3, title:"Problem 1",
+   given:"A vanilla RNN has D = 20 input features, H = 50 hidden units, and C = 4 output classes.",
+   f:[{id:"a",l:"a) Parameters in W<sub>xh</sub> (H × D)",v:1000,t:0.5,u:""},
+      {id:"b",l:"b) Parameters in W<sub>hh</sub> (H × H)",v:2500,t:0.5,u:""},
+      {id:"c",l:"c) Total parameters, including biases and the output layer",v:3754,t:0.5,u:""},
+      {id:"d",l:"d) Recurrent-layer parameters if the cell were an LSTM (4 blocks, output layer excluded)",v:14200,t:0.5,u:""}],
+   sol:"a) W_xh: H × D = 50 × 20 = 1,000\nb) W_hh: H × H = 50 × 50 = 2,500\nc) b_h = 50, W_hy = C × H = 200, b_y = 4\n   Total = H(D + H + 1) + C(H + 1)\n         = 50(71) + 4(51) = 3,550 + 204 = 3,754\nd) LSTM recurrent layer = 4 × H(D + H + 1)\n                        = 4 × 3,550 = 14,200"},
+  {pts:3, title:"Problem 2",
+   given:"A scalar RNN has w = 1.0 (input weight), u = 0.5 (recurrent weight), b = 0, h<sub>0</sub> = 0, and tanh activation. Inputs are x = (1, 2, −1), the target is y = 0.5, and the loss is L = ½(h<sub>3</sub> − y)². Give values to 3 decimals.",
+   f:[{id:"a",l:"h<sub>1</sub>",v:0.762,t:0.006,u:""},
+      {id:"b",l:"h<sub>2</sub>",v:0.983,t:0.006,u:""},
+      {id:"c",l:"h<sub>3</sub>",v:-0.469,t:0.006,u:""},
+      {id:"d",l:"Loss L",v:0.469,t:0.006,u:""}],
+   sol:"a1 = 1.0(1) + 0.5(0)      = 1.000  → h1 = tanh(1.000)  = 0.762\na2 = 1.0(2) + 0.5(0.762)  = 2.381  → h2 = tanh(2.381)  = 0.983\na3 = 1.0(−1) + 0.5(0.983) = −0.508 → h3 = tanh(−0.508) = −0.469\nL = ½(h3 − y)² = ½(−0.469 − 0.5)² = ½(0.969)² = 0.469"},
+  {pts:2, title:"Problem 3",
+   given:"Run BPTT on the network from Problem 2. Let δ<sub>t</sub> = dL/da<sub>t</sub>, with δ<sub>3</sub> = (h<sub>3</sub> − y)(1 − h<sub>3</sub>²) and δ<sub>t</sub> = δ<sub>t+1</sub>·u·(1 − h<sub>t</sub>²) for earlier steps. Give 3 decimals, using your h values from Problem 2.",
+   f:[{id:"a",l:"δ<sub>3</sub>",v:-0.756,t:0.006,u:""},
+      {id:"b",l:"δ<sub>2</sub>",v:-0.013,t:0.002,u:""},
+      {id:"c",l:"dL/du = Σ δ<sub>t</sub>·h<sub>t−1</sub>",v:-0.753,t:0.006,u:""}],
+   sol:"δ3 = (−0.969)(1 − 0.469²) = (−0.969)(0.780) = −0.756\nδ2 = δ3 · u · (1 − h2²) = (−0.756)(0.5)(1 − 0.983²) = −0.0127\nδ1 = δ2 · u · (1 − h1²) = −0.0027\ndL/du = δ3·h2 + δ2·h1 + δ1·h0\n      = −0.743 − 0.0097 + 0 = −0.753\nδ2 is about 1/60 of δ3: the saturated tanh (h2 near 1) shrinks\nthe gradient, a vanishing gradient in miniature."},
+  {pts:2, title:"Problem 4",
+   given:"Actual values are 10, 12, 11, 15 and a model predicts 9, 12, 13, 14. A persistence baseline predicts each value as the previous actual value (predictions 10, 12, 11 for steps 2 to 4). Skill = 1 − MAE<sub>model</sub> / MAE<sub>persistence</sub>, both computed on steps 2 to 4.",
+   f:[{id:"a",l:"Model MAE over all 4 steps",v:1,t:0.01,u:""},
+      {id:"b",l:"Model RMSE over all 4 steps",v:1.225,t:0.01,u:""},
+      {id:"c",l:"Persistence MAE over steps 2 to 4",v:2.333,t:0.01,u:""},
+      {id:"d",l:"Skill score",v:0.571,t:0.01,u:""}],
+   sol:"Errors (actual − predicted): +1, 0, −2, +1\nMAE  = (1 + 0 + 2 + 1) / 4 = 1.000\nRMSE = √((1 + 0 + 4 + 1) / 4) = √1.5 = 1.225\nPersistence errors (steps 2–4): |12−10|, |11−12|, |15−11| = 2, 1, 4\n  MAE = 7 / 3 = 2.333\nModel MAE on steps 2–4 = (0 + 2 + 1) / 3 = 1.000\nSkill = 1 − 1.000 / 2.333 = 0.571"}
+];
+
+var TABS = ["I · True or False","II · Matching","III · Multiple choice","IV · Computation","Results"];
+var MAXPTS = 50;
+var S;
+function fresh() { return {tab:0, tf:{}, mc:{}, mm:{}, mmDone:false, inp:{}, cp:{}}; }
+S = fresh();
+
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function fmt(n) { return String(Math.round(n * 10) / 10); }
+function parseNum(s) { s = String(s == null ? "" : s).replace(/[,\s%]/g,""); return s === "" ? NaN : Number(s); }
+function commas(n) { return n >= 1000 && Math.floor(n) === n ? n.toLocaleString("en-US") : String(n); }
+
+/* scoring */
+function tfScore() { var n = 0, i; for (i = 0; i < TF.length; i++) if (S.tf[i] !== undefined && S.tf[i] === TF[i][1]) n++; return n; }
+function tfDone() { return Object.keys(S.tf).length; }
+function mcScore() { var n = 0, i; for (i = 0; i < MC.length; i++) if (S.mc[i] === MC[i].a) n++; return n * 2; }
+function mcDone() { return Object.keys(S.mc).length; }
+function mmCorrect() { var n = 0, i; for (i = 0; i < 10; i++) if (S.mm[i] === MM_A[i]) n++; return n; }
+function mmFilled() { return Object.keys(S.mm).filter(function (k) { return S.mm[k]; }).length; }
+function cpScoreOf(p) { var r = S.cp[p]; if (!r) return 0; var ok = r.filter(Boolean).length; return CP[p].pts * ok / r.length; }
+function cpScore() { var n = 0, p; for (p = 0; p < CP.length; p++) n += cpScoreOf(p); return n; }
+function cpDone() { return Object.keys(S.cp).length; }
+function totals() {
+  var earned = tfScore() + mcScore() + (S.mmDone ? mmCorrect() : 0) + cpScore();
+  var att = tfDone() + mcDone() * 2 + (S.mmDone ? 10 : 0), p;
+  for (p = 0; p < CP.length; p++) if (S.cp[p]) att += CP[p].pts;
+  return {earned: earned, att: att};
+}
+
+/* chrome */
+function renderBar() {
+  var t = totals();
+  document.getElementById("score").innerHTML = fmt(t.earned) + " <small>/ " + MAXPTS + " pts</small>";
+  document.getElementById("att").style.width = (t.att / MAXPTS * 100) + "%";
+  document.getElementById("earn").style.width = (t.earned / MAXPTS * 100) + "%";
+  document.getElementById("attempted").textContent = fmt(t.att) + " of " + MAXPTS + " attempted";
+  var st = [tfDone() + "/10", (S.mmDone ? "10" : mmFilled()) + "/10", mcDone() + "/10", cpDone() + "/4", ""];
+  document.getElementById("tabs").innerHTML = TABS.map(function (n, i) {
+    return '<button class="tab" role="tab" data-act="tab" data-t="' + i + '" aria-selected="' + (S.tab === i) + '">' + n + (st[i] ? '<span class="st">' + st[i] + '</span>' : '') + '</button>';
+  }).join("");
+}
+
+function partHead(t, p) { return '<div class="part-head"><h2>' + t + '</h2><p>' + p + '</p></div>'; }
+function nextBtn(label) { return '<div class="actions"><button class="btn ghost" data-act="tab" data-t="' + (S.tab + 1) + '">' + label + '</button></div>'; }
+
+/* Part I */
+function viewTF() {
+  var h = partHead("True or False", "Pick True or False. Each statement is worth 1 point. For false statements the feedback gives the corrected version.");
+  h += '<div class="stack">' + TF.map(function (it, i) {
+    var a = S.tf[i], done = a !== undefined, right = done && a === it[1];
+    function b(v, label) {
+      var cls = "opt";
+      if (done) { if (v === it[1]) cls += " correct"; else if (v === a) cls += " wrong"; }
+      return '<button class="' + cls + '" data-act="tf" data-i="' + i + '" data-v="' + v + '"' + (done ? " disabled" : "") + '>' + label + '</button>';
+    }
+    return '<div class="q"><div class="qtop"><span class="num">' + (i + 1) + '</span><p class="qtext">' + it[0] + '</p></div>' +
+      '<div class="opts two">' + b(true, "True") + b(false, "False") + '</div>' +
+      (done ? '<div class="why"><b class="' + (right ? "ok" : "no") + '">' + (right ? "Correct. " : "Not quite. ") + '</b>' + it[2] + '</div>' : '') + '</div>';
+  }).join("") + '</div>';
+  return h + nextBtn("Next: Matching");
+}
+
+/* Part II */
+function viewMM() {
+  var h = partHead("Matching type", "Match each term to its description. Every letter is used once. Each correct match is worth 1 point.");
+  var rows = MM_T.map(function (t, i) {
+    var v = S.mm[i] || "", cls = "mrow", fix = "";
+    if (S.mmDone) { if (v === MM_A[i]) cls += " correct"; else { cls += " wrong"; fix = '<div class="fix">Answer: ' + MM_A[i] + '</div>'; } }
+    var opts = '<option value="">—</option>' + LET.map(function (l) { return '<option value="' + l + '"' + (v === l ? " selected" : "") + '>' + l + '</option>'; }).join("");
+    return '<div class="' + cls + '"><span class="num">' + (i + 1) + '</span><span class="t">' + t + '</span>' +
+      '<select id="mm' + i + '" data-act="mm" data-i="' + i + '" aria-label="Match for ' + esc(t) + '"' + (S.mmDone ? " disabled" : "") + '>' + opts + '</select>' + fix + '</div>';
+  }).join("");
+  var legend = '<ul class="legend"><li class="legend-title">Column B</li>' + MM_D.map(function (d, i) { return '<li><b>' + LET[i] + '</b><span>' + d + '</span></li>'; }).join("") + '</ul>';
+  var h2 = h + '<div class="mgrid"><div class="mrows">' + rows + '</div>' + legend + '</div>';
+  if (S.mmDone) {
+    h2 += '<div class="actions"><span class="note">You matched ' + mmCorrect() + ' of 10 correctly.</span></div>' + nextBtn("Next: Multiple choice");
+  } else {
+    h2 += '<div class="actions"><button class="btn" data-act="mmcheck" id="mmcheck"' + (mmFilled() === 10 ? "" : " disabled") + '>Check matches</button><span class="note" id="mmnote">Fill all 10 rows to check.</span></div>';
+  }
+  return h2;
+}
+
+/* Part III */
+function viewMC() {
+  var h = partHead("Multiple choice", "Choose the best answer. Each item is worth 2 points. Items marked Computation have a worked solution in the feedback.");
+  h += '<div class="stack">' + MC.map(function (it, i) {
+    var a = S.mc[i], done = a !== undefined, right = done && a === it.a;
+    var opts = it.o.map(function (o, j) {
+      var cls = "opt";
+      if (done) { if (j === it.a) cls += " correct"; else if (j === a) cls += " wrong"; }
+      return '<button class="' + cls + '" data-act="mc" data-i="' + i + '" data-o="' + j + '"' + (done ? " disabled" : "") + '><span class="k">' + "abcd"[j] + ')</span><span>' + o + '</span></button>';
+    }).join("");
+    return '<div class="q"><div class="qtop"><span class="num">' + (i + 1) + '</span><p class="qtext">' + it.q + (it.calc ? '<span class="tag">Computation</span>' : '') + '</p></div>' +
+      '<div class="opts">' + opts + '</div>' +
+      (done ? '<div class="why"><b class="' + (right ? "ok" : "no") + '">' + (right ? "Correct. " : "Not quite. ") + '</b>' + it.why + '</div>' : '') + '</div>';
+  }).join("") + '</div>';
+  return h + nextBtn("Next: Computation");
+}
+
+/* Part IV */
+function viewCP() {
+  var h = partHead("Computation problems", "Type your answers, then check. Commas and a % sign are fine. Rounded answers within a small tolerance count as correct.");
+  h += '<div class="stack">' + CP.map(function (p, pi) {
+    var res = S.cp[pi], earned = cpScoreOf(pi);
+    var fields = p.f.map(function (f, fi) {
+      var id = "cp" + pi + f.id, val = S.inp[id] || "", cls = "field", exp = "";
+      if (res) { cls += res[fi] ? " ok" : " no"; if (!res[fi]) exp = '<div class="exp">Expected ' + commas(f.v) + (f.u || "") + '</div>'; }
+      return '<div class="' + cls + '"><label for="' + id + '">' + f.l + '</label><input id="' + id + '" type="text" inputmode="decimal" autocomplete="off" data-act="inp" value="' + esc(val) + '"' + (res ? " disabled" : "") + ' placeholder="' + (f.u ? "value in " + f.u : "value") + '">' + exp + '</div>';
+    }).join("");
+    return '<div class="q"><div class="qtop"><span class="num">' + (pi + 1) + '</span><p class="qtext"><b>' + p.title + '</b></p><span class="pts">' + (res ? fmt(earned) + " / " : "") + p.pts + ' pts</span></div>' +
+      '<p class="given">' + p.given + '</p><div class="fields">' + fields + '</div>' +
+      (res ? '<div class="sol"><span class="sol-title">Worked solution</span>' + esc(p.sol) + '</div>' : '<div class="actions"><button class="btn" data-act="cpcheck" data-p="' + pi + '">Check answers</button></div>') + '</div>';
+  }).join("") + '</div>';
+  return h + '<div class="actions"><button class="btn ghost" data-act="tab" data-t="4">See results</button></div>';
+}
+
+/* Results */
+function missed(kind) {
+  var out = [], i;
+  if (kind === "tf") { for (i = 0; i < 10; i++) if (S.tf[i] !== TF[i][1]) out.push(i + 1); }
+  if (kind === "mc") { for (i = 0; i < 10; i++) if (S.mc[i] !== MC[i].a) out.push(i + 1); }
+  if (kind === "mm") { for (i = 0; i < 10; i++) if (!S.mmDone || S.mm[i] !== MM_A[i]) out.push(i + 1); }
+  if (kind === "cp") { for (i = 0; i < 4; i++) if (!S.cp[i] || cpScoreOf(i) < CP[i].pts) out.push(i + 1); }
+  return out;
+}
+function viewRes() {
+  var t = totals(), pct = Math.round(t.earned / MAXPTS * 100);
+  var msg = pct >= 90 ? "Excellent command of the material." : pct >= 75 ? "Solid. Review the items listed below." : pct >= 60 ? "Passing. Revisit the slides for the items listed below." : "Review the deck, especially the parts with missed items, then retake.";
+  if (t.att < MAXPTS) msg = "You have attempted " + fmt(t.att) + " of " + MAXPTS + " points. " + (t.att ? "Finish the remaining items for a full score." : "Start with Part I.");
+  var parts = [
+    ["Part I · True or False", tfScore(), 10, "tf"],
+    ["Part II · Matching", S.mmDone ? mmCorrect() : 0, 10, "mm"],
+    ["Part III · Multiple choice", mcScore(), 20, "mc"],
+    ["Part IV · Computation", cpScore(), 10, "cp"]
+  ];
+  var rows = parts.map(function (p) {
+    var m = missed(p[3]);
+    return '<div class="rrow"><div class="rl"><span>' + p[0] + '</span><span>' + fmt(p[1]) + ' / ' + p[2] + '</span></div>' +
+      '<div class="track"><i class="earn" style="width:' + (p[1] / p[2] * 100) + '%"></i></div>' +
+      '<div class="miss">' + (m.length ? "Items to review: " + m.join(", ") : "No items to review") + '</div></div>';
+  }).join("");
+  return partHead("Results", "Your score by part.") +
+    '<div class="result"><div class="big">' + fmt(t.earned) + ' <small>/ ' + MAXPTS + ' pts · ' + pct + '%</small></div><p>' + msg + '</p><div class="rows">' + rows + '</div>' +
+    '<div class="actions"><button class="btn" data-act="retake">Retake quiz</button></div></div>';
+}
+
+function render() {
+  var v = [viewTF, viewMM, viewMC, viewCP, viewRes][S.tab]();
+  document.getElementById("view").innerHTML = v;
+  renderBar();
+}
+
+/* events */
+var view = document.getElementById("view");
+document.addEventListener("click", function (e) {
+  var el = e.target.closest("[data-act]");
+  if (!el || el.disabled) return;
+  var act = el.getAttribute("data-act");
+  if (act === "tab") { S.tab = Number(el.getAttribute("data-t")); render(); window.scrollTo(0, 0); }
+  else if (act === "tf") { S.tf[Number(el.getAttribute("data-i"))] = el.getAttribute("data-v") === "true"; render(); }
+  else if (act === "mc") { S.mc[Number(el.getAttribute("data-i"))] = Number(el.getAttribute("data-o")); render(); }
+  else if (act === "mmcheck") { S.mmDone = true; render(); }
+  else if (act === "cpcheck") {
+    var p = Number(el.getAttribute("data-p"));
+    S.cp[p] = CP[p].f.map(function (f) {
+      var n = parseNum(S.inp["cp" + p + f.id]);
+      return !isNaN(n) && Math.abs(n - f.v) <= f.t;
+    });
+    render();
+  }
+  else if (act === "retake") { S = fresh(); render(); window.scrollTo(0, 0); }
+});
+document.addEventListener("change", function (e) {
+  var el = e.target;
+  if (el.getAttribute && el.getAttribute("data-act") === "mm") {
+    var i = Number(el.getAttribute("data-i"));
+    if (el.value) S.mm[i] = el.value; else delete S.mm[i];
+    var n = mmFilled(), btn = document.getElementById("mmcheck"), note = document.getElementById("mmnote");
+    if (btn) btn.disabled = n !== 10;
+    if (note) note.textContent = n === 10 ? "Ready to check." : "Fill all 10 rows to check (" + n + " of 10).";
+    renderBar();
+  }
+});
+document.addEventListener("input", function (e) {
+  var el = e.target;
+  if (el.getAttribute && el.getAttribute("data-act") === "inp") S.inp[el.id] = el.value;
+});
+render();
+</script>
+
+</body></html>
